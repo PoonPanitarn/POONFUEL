@@ -260,149 +260,95 @@
     border-radius: 6px; padding: 2px 8px; font-size: 12px; font-weight: 600;
     font-family: 'DM Mono', monospace;
   }
-
-  /* DESKTOP UI */
-  @media (min-width: 1024px) {
-    body {
-      background: linear-gradient(135deg,#111315 0%,#171b1f 100%);
-      padding: 24px;
-    }
-    #app {
-      max-width: 1400px;
-      border-radius: 24px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      min-height: calc(100vh - 48px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
-    }
-    #screenCars {
-      border-right: 1px solid var(--border);
-      overflow-y: auto;
-      height: calc(100vh - 48px);
-    }
-    #screenRecords {
-      overflow-y: auto;
-      height: calc(100vh - 48px);
-      background: #15181b;
-    }
-    .screen {
-      padding: 28px;
-    }
-    .car-grid {
-      gap: 16px;
-    }
-    .car-card:hover {
-      transform: translateY(-2px) scale(1.01);
-    }
-    .stats-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    .stat-card.full {
-      grid-column: span 3;
-    }
-    .modal {
-      border-radius: 24px;
-      max-width: 760px;
-    }
-    .rec-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
-      gap: 16px;
-    }
-    .fab {
-      right: 40px;
-      bottom: 40px;
-    }
-  }
-
-  .auth-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.88);
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  .auth-card {
-    width: 100%;
-    max-width: 420px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 28px;
-    box-shadow: var(--shadow);
-  }
-  .auth-title {
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 8px;
-  }
-  .auth-sub {
-    color: var(--text-muted);
-    margin-bottom: 20px;
-    line-height: 1.6;
-  }
-
 </style>
 </head>
 <body>
 
-<div class="auth-overlay" id="authOverlay">
-  <div class="auth-card">
-    <div class="app-logo" style="font-size:30px;margin-bottom:12px;">POON<span>*</span>FUEL</div>
-    <div class="auth-title">เข้าสู่ระบบ</div>
-    <div class="auth-sub">รองรับ Firebase Authentication ด้วยเบอร์มือถือ พร้อมใช้งานจริงหลังใส่ Firebase Config ของคุณ</div>
-    <div class="form-group">
-      <label>เบอร์มือถือ</label>
-      <input type="tel" id="phoneNumber" placeholder="+66xxxxxxxxx">
+<!-- AUTH SCREEN -->
+<div id="authScreen" style="
+position:fixed;
+inset:0;
+background:#111315;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:9999;
+padding:20px;
+">
+  <div style="
+    width:100%;
+    max-width:420px;
+    background:#1B1E21;
+    border:1px solid #343A40;
+    border-radius:20px;
+    padding:28px;
+  ">
+    <div style="font-size:28px;font-weight:700;margin-bottom:8px;color:white;">
+      POON*FUEL
     </div>
-    
-    <button class="btn btn-primary" onclick="sendOTP()">ส่ง OTP</button>
 
-    <div class="divider"></div>
-
-    <div class="form-group">
-      <label>OTP</label>
-      <input type="text" id="otpCode" placeholder="กรอกรหัส OTP">
+    <div style="color:#A8B0B8;margin-bottom:24px;">
+      Login เพื่อเข้าถึงข้อมูลของคุณ
     </div>
-    <button class="btn btn-secondary" onclick="verifyOTP()">ยืนยัน OTP</button>
+
+    <input id="emailInput" type="email" placeholder="Email"
+      style="
+      width:100%;
+      padding:14px;
+      margin-bottom:12px;
+      border-radius:12px;
+      border:1px solid #343A40;
+      background:#262A2E;
+      color:white;
+      ">
+
+    <input id="passwordInput" type="password" placeholder="Password"
+      style="
+      width:100%;
+      padding:14px;
+      margin-bottom:16px;
+      border-radius:12px;
+      border:1px solid #343A40;
+      background:#262A2E;
+      color:white;
+      ">
+
+    <div style="display:flex;gap:10px;">
+      <button onclick="registerEmail()"
+        style="
+        flex:1;
+        padding:14px;
+        border:none;
+        border-radius:12px;
+        background:#D4AF37;
+        color:white;
+        font-weight:700;
+        cursor:pointer;
+        ">
+        สมัครสมาชิก
+      </button>
+
+      <button onclick="loginEmail()"
+        style="
+        flex:1;
+        padding:14px;
+        border:none;
+        border-radius:12px;
+        background:#7BC96F;
+        color:white;
+        font-weight:700;
+        cursor:pointer;
+        ">
+        Login
+      </button>
+    </div>
   </div>
 </div>
 
-<div id="app">
-
-<div id="authSection" style="background:#1B1E21;padding:20px;border-bottom:1px solid #343A40;">
-  <div style="font-size:18px;font-weight:700;margin-bottom:12px;">เข้าสู่ระบบด้วย Email</div>
-
-  <input type="email" id="emailInput" placeholder="your@email.com"
-    style="width:100%;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #343A40;background:#262A2E;color:white;">
-
-  <input type="password" id="passwordInput" placeholder="รหัสผ่าน"
-    style="width:100%;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #343A40;background:#262A2E;color:white;">
-
-  <div style="display:flex;gap:10px;">
-    <button onclick="registerEmail()" style="flex:1;padding:12px;border:none;border-radius:10px;background:#D4AF37;color:white;font-weight:700;">
-      สมัครสมาชิก
-    </button>
-
-    <button onclick="loginEmail()" style="flex:1;padding:12px;border:none;border-radius:10px;background:#7BC96F;color:white;font-weight:700;">
-      Login
-    </button>
-  </div>
-
-  <button onclick="logoutFirebase()" style="width:100%;padding:12px;border:none;border-radius:10px;background:#C0392B;color:white;font-weight:700;margin-top:10px;">
-    Logout
-  </button>
-</div>
-
-
+<div id="app" style="display:none;">
   <!-- HEADER -->
   <div class="app-header" id="mainHeader">
-    <div class="app-logo">POON<span>*</span>FUEL</div>
+    <div class="app-logo">POON<span>*</span>FUEL</div><button onclick="logoutFirebase()" style="margin-left:auto;background:#C0392B;border:none;color:white;padding:8px 12px;border-radius:8px;cursor:pointer;">Logout</button>
   </div>
 
   <!-- SCREEN: CAR LIST -->
@@ -960,7 +906,7 @@ function showReport(newRec) {
   html += `</div>`;
 
   // Top 3 fuel
-  html += `<div class="report-section"><h4>Top 3 น้ำมันจากปั๊มที่เติมบ่อย</h4>`;
+  html += `<div class="report-section"><h4>Top 3 น้ำมันที่เติมบ่อย</h4>`;
   top3Fuel.forEach(([name,cnt],i) => {
     html += `<div class="top3-item"><div class="top3-rank rank-${i+1}">${i+1}</div><div class="top3-name">${name}</div><div class="top3-val">${cnt} ครั้ง</div></div>`;
   });
@@ -1031,7 +977,7 @@ function renderStats() {
   // Top 3 station
   const stCount = {};
   recs.forEach(r => { stCount[r.station] = (stCount[r.station]||0)+1; });
-  
+  const top3Station = Object.entries(stCount).sort((a,b)=>b[1]-a[1]).slice(0,3);
 
   // Top 3 value
   const fuelValue = {};
@@ -1077,10 +1023,16 @@ function renderStats() {
       </div>
     </div>
 
-    <div class="section-title">Top 3 น้ำมันจากปั๊มที่เติมบ่อย</div>
+    <div class="section-title">Top 3 น้ำมันที่เติมบ่อย</div>
     <div class="form-section" style="padding:16px;">
       ${top3Fuel.map(([name,cnt],i) => `<div class="top3-item"><div class="top3-rank rank-${i+1}">${i+1}</div><div class="top3-name">${name}</div><div class="top3-val">${cnt} ครั้ง</div></div>`).join('')}
     </div>
+
+    <div class="section-title">Top 3 ปั๊มที่ใช้บ่อย</div>
+    <div class="form-section" style="padding:16px;">
+      ${top3Station.map(([name,cnt],i) => `<div class="top3-item"><div class="top3-rank rank-${i+1}">${i+1}</div><div class="top3-name">${name}</div><div class="top3-val">${cnt} ครั้ง</div></div>`).join('')}
+    </div>
+
     <div class="section-title">Top 3 น้ำมันคุ้มค่าที่สุด</div>
     <div class="form-section" style="padding:16px;">
       ${top3Value.length ? top3Value.map(([name,val],i) => `<div class="top3-item"><div class="top3-rank rank-${i+1}">${i+1}</div><div class="top3-name">${name}</div><div class="top3-val">${(val*100).toFixed(1)} กม./100฿</div></div>`).join('') : '<div style="color:var(--text-muted);font-size:13px;">ยังไม่มีข้อมูลระยะทาง</div>'}
@@ -1165,15 +1117,23 @@ renderCars();
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
+<!-- FIREBASE AUTH + FIRESTORE -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import {
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
   getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
   onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBcYJcFVEyHXb1cvxNAVABhUOWLpv4aa80",
@@ -1186,52 +1146,77 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 window.firebaseAuth = auth;
 
+async function loadUserData(uid) {
+  const ref = doc(db, "users", uid);
+  const snap = await getDoc(ref);
 
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    console.log("Logged in:", user.email);
-    document.getElementById('authSection').style.display = 'none';
+  if (snap.exists()) {
+    window.state = snap.data().state || window.state;
+    renderCars();
   } else {
-    document.getElementById('authSection').style.display = 'block';
+    await saveUserData(uid);
   }
-});
+}
 
-window.registerEmail = async function() {
+async function saveUserData(uid) {
+  await setDoc(doc(db, "users", uid), {
+    state: window.state
+  });
+}
+
+window.registerEmail = async function () {
   const email = document.getElementById('emailInput').value;
   const password = document.getElementById('passwordInput').value;
 
   try {
     await createUserWithEmailAndPassword(auth, email, password);
     alert('สมัครสมาชิกสำเร็จ');
-  } catch (err) {
-    console.error(err);
-    alert(err.message);
+  } catch (e) {
+    alert(e.message);
   }
-}
+};
 
-window.loginEmail = async function() {
+window.loginEmail = async function () {
   const email = document.getElementById('emailInput').value;
   const password = document.getElementById('passwordInput').value;
 
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    alert('Login สำเร็จ');
-  } catch (err) {
-    console.error(err);
-    alert(err.message);
+  } catch (e) {
+    alert(e.message);
   }
-}
+};
 
-window.logoutFirebase = async function() {
-
+window.logoutFirebase = async function () {
   await signOut(auth);
-  alert('ออกจากระบบแล้ว');
-}
+};
+
+onAuthStateChanged(auth, async (user) => {
+  const authBox = document.getElementById('authScreen');
+  const appBox = document.getElementById('app');
+
+  if (user) {
+    authBox.style.display = 'none';
+    appBox.style.display = 'block';
+
+    await loadUserData(user.uid);
+
+    const originalSave = window.saveState;
+    window.saveState = async function() {
+      originalSave();
+      await saveUserData(user.uid);
+    };
+
+  } else {
+    appBox.style.display = 'none';
+    authBox.style.display = 'flex';
+  }
+});
 </script>
 
 </body>
