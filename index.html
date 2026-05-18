@@ -1120,13 +1120,17 @@ renderCars();
 <!-- FIREBASE AUTH + FIRESTORE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
 import {
   getAuth,
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut
+  signOut,
+  setPersistence,
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 
 import {
   getFirestore,
@@ -1147,26 +1151,59 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
+await setPersistence(auth, browserLocalPersistence);
 const db = getFirestore(app);
 
 window.firebaseAuth = auth;
 
+import {
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+let unsubscribeRealtime = null;
+
 async function loadUserData(uid) {
   const ref = doc(db, "users", uid);
-  const snap = await getDoc(ref);
 
-  if (snap.exists()) {
-    window.state = snap.data().state || window.state;
-    renderCars();
-  } else {
-    await saveUserData(uid);
+  if (unsubscribeRealtime) {
+    unsubscribeRealtime();
   }
+
+  unsubscribeRealtime = onSnapshot(ref, async (snap) => {
+
+    if (snap.exists()) {
+
+      const data = snap.data();
+
+      if (data.state) {
+        window.state = data.state;
+
+        if (typeof renderCars === 'function') {
+          renderCars();
+        }
+
+        if (typeof updateDashboard === 'function') {
+          updateDashboard();
+        }
+      }
+
+    } else {
+
+      await saveUserData(uid);
+
+    }
+
+  });
 }
 
 async function saveUserData(uid) {
+
   await setDoc(doc(db, "users", uid), {
-    state: window.state
-  });
+    state: window.state,
+    updatedAt: new Date().toISOString()
+  }, { merge: true });
+
 }
 
 window.registerEmail = async function () {
@@ -1207,10 +1244,21 @@ onAuthStateChanged(auth, async (user) => {
     await loadUserData(user.uid);
 
     const originalSave = window.saveState;
+
     window.saveState = async function() {
-      originalSave();
+
+      if (typeof originalSave === 'function') {
+        originalSave();
+      }
+
       await saveUserData(user.uid);
+
     };
+
+    window.addEventListener('beforeunload', async () => {
+      await saveUserData(user.uid);
+    });
+
 
   } else {
     appBox.style.display = 'none';
