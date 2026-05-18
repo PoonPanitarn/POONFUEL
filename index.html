@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POON*FUEL</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #111315;
+    --surface: #1B1E21;
+    --surface2: #262A2E;
+    --border: #343A40;
+    --text: #F5F5F5;
+    --text-muted: #A8B0B8;
+    --accent: #7BC96F;
+    --accent-light: #1E3421;
+    --accent2: #D4AF37;
+    --danger: #C0392B;
+    --danger-light: #FDECEA;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+  }
+  /* APP SHELL */
+  #app { max-width: 480px; margin: 0 auto; min-height: 100vh; background: var(--bg); position: relative; }
+  /* HEADER */
+  .app-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .app-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .app-logo span { color: var(--accent2); }
+  .back-btn {
+    background: none; border: none; cursor: pointer;
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text); font-size: 18px;
+    transition: background 0.15s;
+  }
+  .back-btn:hover { background: var(--surface2); }
+  .header-title { font-weight: 600; font-size: 15px; flex: 1; }
+  /* SCREENS */
+  .screen { display: none; padding: 20px; }
+  .screen.active { display: block; }
+  /* CAR CARDS */
+  .car-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+  .car-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: var(--shadow);
+  }
+  .car-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .car-icon {
+    width: 44px; height: 44px;
+    background: var(--accent-light);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .car-info { flex: 1; }
+  .car-name { font-weight: 600; font-size: 15px; }
+  .car-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+  .car-actions { display: flex; gap: 6px; }
+  .icon-btn {
+    background: none; border: 1px solid var(--border);
+    border-radius: 8px; width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 14px; color: var(--text-muted);
+    transition: all 0.15s;
+  }
+  .icon-btn:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-light); }
+  .icon-btn.edit:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+  /* BUTTONS */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 6px; padding: 11px 20px; border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+    cursor: pointer; border: none; transition: all 0.15s; width: 100%;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #234010; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-danger { background: var(--danger-light); color: var(--danger); border: 1px solid #f5c6c2; }
+  .btn-danger:hover { background: var(--danger); color: #fff; }
+  .btn-gold { background: var(--accent2); color: #fff; }
+  .btn-sm { padding: 8px 14px; font-size: 13px; width: auto; }
+  /* FORMS */
+  .form-section { background: var(--surface); border-radius: var(--radius); padding: 20px; border: 1px solid var(--border); margin-bottom: 14px; box-shadow: var(--shadow); }
+  .form-section h3 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; }
+  .form-group { margin-bottom: 14px; }
+  .form-group:last-child { margin-bottom: 0; }
+  label { display: block; font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; }
+  input, select, textarea {
+    width: 100%; padding: 11px 14px;
+    border: 1px solid var(--border); border-radius: 9px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    background: var(--surface); color: var(--text);
+    transition: border 0.15s; outline: none;
+  }
+  input:focus, select:focus { border-color: var(--accent); }
+  .inline-calc {
+    background: var(--accent-light);
+    border-radius: 9px; padding: 12px 14px;
+    font-size: 14px; color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    font-weight: 500; margin-top: 8px;
+  }
+
+  .context-badge {
+    display:inline-block;
+    padding:4px 8px;
+    border-radius:999px;
+    font-size:11px;
+    font-weight:600;
+    margin-bottom:10px;
+  }
+
+  /* RECORD LIST */
+  .rec-list { display: flex; flex-direction: column; gap: 10px; }
+  .rec-card {
+    background: var(--surface); border-radius: var(--radius);
+    padding: 16px 18px; border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .rec-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .rec-date { font-size: 12px; color: var(--text-muted); font-family: 'DM Mono', monospace; }
+  .rec-fuel-badge {
+    font-size: 11px; font-weight: 600; padding: 3px 9px;
+    border-radius: 20px; background: var(--accent-light); color: var(--accent);
+  }
+  .rec-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
+  .rec-row:last-child { margin-bottom: 0; }
+  .rec-label { color: var(--text-muted); }
+  .rec-val { font-weight: 500; font-family: 'DM Mono', monospace; }
+  .rec-highlight { font-size: 15px; font-weight: 700; color: var(--accent); }
+  /* STATS CARDS */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .stat-card {
+    background: var(--surface); border-radius: var(--radius);
+    padding: 16px; border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .stat-card.full { grid-column: 1 / -1; }
+  .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .stat-val { font-size: 22px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--text); }
+  .stat-val.gold { color: var(--accent2); }
+  .stat-val.green { color: var(--accent); }
+  .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  /* TOP 3 */
+  .top3-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 0; border-bottom: 1px solid var(--border);
+  }
+  .top3-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .top3-rank {
+    width: 26px; height: 26px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; flex-shrink: 0;
+  }
+  .rank-1 { background: var(--accent2); color: #fff; }
+  .rank-2 { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .rank-3 { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .top3-name { flex: 1; font-size: 13px; font-weight: 500; }
+  .top3-val { font-size: 13px; font-family: 'DM Mono', monospace; color: var(--text-muted); }
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+    z-index: 200; display: none; align-items: flex-end; justify-content: center;
+    backdrop-filter: blur(2px);
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--surface); border-radius: 20px 20px 0 0;
+    padding: 24px 20px; width: 100%; max-width: 480px;
+    max-height: 90vh; overflow-y: auto;
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+  .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+  /* FAB */
+  .fab {
+    position: fixed; bottom: 28px; right: calc(50% - 220px);
+    width: 52px; height: 52px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    border: none; cursor: pointer; font-size: 22px;
+    box-shadow: 0 4px 20px rgba(45,80,22,0.4);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; z-index: 50;
+  }
+  .fab:hover { transform: scale(1.05); background: #234010; }
+  @media (max-width: 480px) { .fab { right: 20px; } }
+  /* EMPTY STATE */
+  .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-title { font-weight: 600; font-size: 16px; color: var(--text); margin-bottom: 6px; }
+  .empty-sub { font-size: 14px; }
+  /* TABS */
+  .tabs { display: flex; gap: 4px; background: var(--surface2); border-radius: 10px; padding: 4px; margin-bottom: 16px; }
+  .tab-btn {
+    flex: 1; padding: 8px; border: none; border-radius: 7px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    cursor: pointer; background: none; color: var(--text-muted); transition: all 0.15s;
+  }
+  .tab-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 16px 0; }
+  /* NOTIFICATION TOAST */
+  .toast {
+    position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #fff; border-radius: 10px;
+    padding: 10px 20px; font-size: 13px; font-weight: 500; z-index: 999;
+    display: none; animation: fadeInOut 2.5s ease forwards;
+    white-space: nowrap;
+  }
+  @keyframes fadeInOut { 0%{opacity:0;transform:translateX(-50%) translateY(-6px)} 15%{opacity:1;transform:translateX(-50%) translateY(0)} 80%{opacity:1} 100%{opacity:0} }
+  /* REPORT MODAL SPECIAL */
+  .report-section { background: var(--surface2); border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+  .report-section h4 { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .report-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; }
+  .report-row:last-child { margin-bottom: 0; }
+  .report-key { color: var(--text-muted); }
+  .report-val { font-weight: 600; font-family: 'DM Mono', monospace; }
+  .report-val.up { color: var(--danger); }
+  .report-val.down { color: var(--accent); }
+  .section-title { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 20px 0 10px; }
+  /* PRICE BADGE */
+  .price-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--accent-light); color: var(--accent);
+    border-radius: 6px; padding: 2px 8px; font-size: 12px; font-weight: 600;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* DESKTOP UI */
+  @media (min-width: 1024px) {
+    body {
+      background: linear-gradient(135deg,#111315 0%,#171b1f 100%);
+      padding: 24px;
+    }
+    #app {
+      max-width: 1400px;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      min-height: calc(100vh - 48px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+    #screenCars {
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      height: calc(100vh - 48px);
+    }
+    #screenRecords {
+      overflow-y: auto;
+      height: calc(100vh - 48px);
+      background: #15181b;
+    }
+    .screen {
+      padding: 28px;
+    }
+    .car-grid {
+      gap: 16px;
+    }
+    .car-card:hover {
+      transform: translateY(-2px) scale(1.01);
+    }
+    .stats-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .stat-card.full {
+      grid-column: span 3;
+    }
+    .modal {
+      border-radius: 24px;
+      max-width: 760px;
+    }
+    .rec-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
+      gap: 16px;
+    }
+    .fab {
+      right: 40px;
+      bottom: 40px;
+    }
+  }
+
+  .auth-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: var(--shadow);
+  }
+  .auth-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .auth-sub {
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-card">
+    <div class="app-logo" style="font-size:30px;margin-bottom:12px;">POON<span>*</span>FUEL</div>
+    <div class="auth-title">เข้าสู่ระบบ</div>
+    <div class="auth-sub">รองรับ Firebase Authentication ด้วยเบอร์มือถือ พร้อมใช้งานจริงหลังใส่ Firebase Config ของคุณ</div>
+    <div class="form-group">
+      <label>เบอร์มือถือ</label>
+      <input type="tel" id="phoneNumber" placeholder="+66xxxxxxxxx">
+    </div>
+    <div id="recaptcha-container" style="margin:12px 0;"></div>
+    <button class="btn btn-primary" onclick="sendOTP()">ส่ง OTP</button>
+
+    <div class="divider"></div>
+
+    <div class="form-group">
+      <label>OTP</label>
+      <input type="text" id="otpCode" placeholder="กรอกรหัส OTP">
+    </div>
+    <button class="btn btn-secondary" onclick="verifyOTP()">ยืนยัน OTP</button>
+  </div>
+</div>
+
+<div id="app">
+<div id="authSection" style="background:#1B1E21;padding:20px;border-bottom:1px solid #343A40;">
+  <div style="font-size:18px;font-weight:700;margin-bottom:12px;">เข้าสู่ระบบ</div>
+
+  <input type="text" id="phoneNumber" placeholder="+66xxxxxxxxx"
+    style="width:100%;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #343A40;background:#262A2E;color:white;">
+
+  <button onclick="sendOTP()" style="width:100%;padding:12px;border:none;border-radius:10px;background:#7BC96F;color:white;font-weight:700;margin-bottom:10px;">
+    ส่ง OTP
+  </button>
+
+  <input type="text" id="otpCode" placeholder="กรอก OTP"
+    style="width:100%;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #343A40;background:#262A2E;color:white;">
+
+  <button onclick="verifyOTP()" style="width:100%;padding:12px;border:none;border-radius:10px;background:#D4AF37;color:white;font-weight:700;">
+    ยืนยัน OTP
+  </button>
+
+  <div id="recaptcha-container" style="margin-top:12px;"></div>
+</div>
+
+  <!-- HEADER -->
+  <div class="app-header" id="mainHeader">
+    <div class="app-logo">POON<span>*</span>FUEL</div>
+  </div>
+
+  <!-- SCREEN: CAR LIST -->
+  <div class="screen active" id="screenCars">
+    <div style="margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <div style="font-size:20px; font-weight:700;">รถของฉัน</div>
+        <div style="font-size:13px; color:var(--text-muted); margin-top:2px;">เลือกรถที่ต้องการ track</div>
+      </div>
+    </div>
+    <div class="car-grid" id="carGrid">
+      <!-- cars rendered here -->
+    </div>
+    <div style="height:80px;"></div>
+    <button class="fab" onclick="openAddCar()">＋</button>
+  </div>
+
+  <!-- SCREEN: FUEL RECORDS -->
+  <div class="screen" id="screenRecords">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('records',this)">บันทึก</button>
+      <button class="tab-btn" onclick="switchTab('stats',this)">สถิติ</button>
+    </div>
+
+    <button class="btn btn-gold" style="margin-bottom:14px;" onclick="exportPDF()">📄 Export PDF Report</button>
+    <!-- RECORDS TAB -->
+    <div id="tabRecords">
+      <div class="rec-list" id="recList"></div>
+      <div style="height:80px;"></div>
+    </div>
+    <!-- STATS TAB -->
+    <div id="tabStats" style="display:none;">
+      <div id="statsContent"></div>
+      <div style="height:20px;"></div>
+    </div>
+    <button class="fab" onclick="openAddRecord()">＋</button>
+  </div>
+</div>
+
+<!-- MODAL: ADD/EDIT CAR -->
+<div class="modal-overlay" id="modalCar">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2 id="carModalTitle">เพิ่มรถใหม่</h2>
+    <div class="form-group">
+      <label>ยี่ห้อรถ</label>
+      <input type="text" id="carBrand" placeholder="เช่น Toyota, Honda, Mazda">
+    </div>
+    <div class="form-group">
+      <label>รุ่นรถ</label>
+      <input type="text" id="carModel" placeholder="เช่น Corolla Cross, Civic">
+    </div>
+    <div class="form-group">
+      <label>ปี (โฉม)</label>
+      <input type="number" id="carYear" placeholder="เช่น 2022">
+    </div>
+    <div class="form-group">
+      <label>ชื่อเจ้าของ</label>
+      <input type="text" id="carOwner" placeholder="ชื่อคนขับ">
+    </div>
+    <div style="display:flex; gap:10px; margin-top:20px;">
+      <button class="btn btn-secondary" onclick="closeModal('modalCar')">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveCar()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ADD/EDIT RECORD -->
+<div class="modal-overlay" id="modalRecord">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2 id="recModalTitle">บันทึกการเติมน้ำมัน</h2>
+    <input type="hidden" id="recEditId">
+
+    <div class="form-section">
+      <h3>ข้อมูลการเติม</h3>
+      <div class="form-group">
+        <label>วันที่เติม</label>
+        <input type="date" id="recDate">
+      </div>
+      <div class="form-group">
+        <label>ปั๊มน้ำมัน</label>
+        <select id="recStation" onchange="updateFuelTypes()">
+          <option value="">-- เลือกปั๊ม --</option>
+          <option value="PTT">PTT</option>
+          <option value="Bangchak">Bangchak</option>
+          <option value="Shell">Shell</option>
+          <option value="Caltex">Caltex</option>
+          <option value="PT">PT</option>
+          <option value="Susco">Susco</option>
+          <option value="ETC">ETC</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>ประเภทน้ำมัน</label>
+        <select id="recFuelType">
+          <option value="">-- เลือกปั๊มก่อน --</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>ราคา</h3>
+      <div class="form-group">
+        <label>ราคาน้ำมันต่อลิตร (บาท)</label>
+        <input type="number" id="recPricePerL" step="0.01" placeholder="0.00" oninput="calcLiters()">
+      </div>
+      <div class="form-group">
+        <label>ยอดเติมครั้งนี้ (บาท)</label>
+        <input type="number" id="recTotalCost" step="0.01" placeholder="0.00" oninput="calcLiters()">
+      </div>
+      <div class="inline-calc" id="litersCalc">⛽ ปริมาณ: — ลิตร</div>
+    </div>
+
+    <div class="form-section">
+      <h3>ข้อมูลจากถังก่อนหน้า</h3>
+      <div style="background:var(--surface2); border-radius:10px; padding:10px 12px; margin-bottom:16px; font-size:12px; color:var(--text-muted); line-height:1.5;">
+        ข้อมูลส่วนนี้คือค่าที่เกิดขึ้นก่อนเติมน้ำมันครั้งปัจจุบัน เช่น ระยะที่วิ่งได้จริงและค่าเฉลี่ยจากถังเดิม
+      </div>
+      <div class="form-group">
+        <label>Range Left ก่อนเติม (กม.)</label>
+        <input type="number" id="recRangeLeft" placeholder="กม.">
+      </div>
+      <div class="form-group">
+        <label>ระยะที่วิ่งในถังก่อนหน้า (กม.)</label>
+        <input type="number" id="recKmDriven" placeholder="กม.">
+      </div>
+      <div class="form-group">
+        <label>AVG KM/L ที่รถคำนวณได้จากถังก่อนหน้า</label>
+        <input type="number" id="recAvgCar" step="0.01" placeholder="กม./ลิตร">
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>ข้อมูลปัจจุบันหลังเติม</h3>
+      <div style="background:var(--accent-light); border-radius:10px; padding:10px 12px; margin-bottom:16px; font-size:12px; color:var(--accent); line-height:1.5;">
+        ข้อมูลส่วนนี้คือค่าปัจจุบันหลังจากเติมน้ำมันเสร็จแล้ว
+      </div>
+      <div class="form-group">
+        <label>ODO รวมปัจจุบัน (กม.)</label>
+        <input type="number" id="recOdo" placeholder="กม.">
+      </div>
+      <div class="form-group">
+        <label>Range หลังเติม (กม. วิ่งได้อีก)</label>
+        <input type="number" id="recRangeAfter" placeholder="กม.">
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; margin-top:4px;">
+      <button class="btn btn-secondary" onclick="closeModal('modalRecord')">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveRecord()">บันทึกและดูรายงาน</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: REPORT -->
+<div class="modal-overlay" id="modalReport">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+      <h2 style="margin:0;">📊 รายงานการเติม</h2>
+      <button class="icon-btn" onclick="closeModal('modalReport')">✕</button>
+    </div>
+    <div id="reportContent"></div>
+    <button class="btn btn-primary" style="margin-top:12px;" onclick="closeModal('modalReport')">รับทราบ</button>
+  </div>
+</div>
+
+<!-- MODAL: RECORD DETAIL -->
+<div class="modal-overlay" id="modalDetail">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+      <h2 style="margin:0;">ข้อมูลการเติม</h2>
+      <button class="icon-btn" onclick="closeModal('modalDetail')">✕</button>
+    </div>
+    <div id="detailContent"></div>
+    <button class="btn btn-secondary" style="margin-top:12px;" onclick="closeModal('modalDetail')">ปิด</button>
+  </div>
+</div>
+
+<!-- MODAL: CONFIRM DELETE -->
+<div class="modal-overlay" id="modalConfirm">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2>ยืนยันการลบ</h2>
+    <p style="color:var(--text-muted); margin-bottom:20px; font-size:14px;" id="confirmMsg">คุณแน่ใจหรือไม่?</p>
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-secondary" onclick="closeModal('modalConfirm')">ยกเลิก</button>
+      <button class="btn btn-danger" id="confirmBtn">ลบ</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ======== DATA ========
+const FUEL_TYPES = {
+  PTT: ['Gasohol 95', 'Gasohol E20', 'Benzine 95'],
+  Bangchak: ['Evo Gasohol 95 S', 'Evo Gasohol E20 S'],
+  Shell: ['V-Power Gasohol 95', 'FuelSave Gasohol 95', 'FuelSave Gasohol E20'],
+  Caltex: ['Gold 95 Techron', 'Gasohol 95 Techron', 'Gasohol E20'],
+  PT: ['Gasohol 95', 'Gasohol E20', 'Benzine 95'],
+  Susco: ['Gasohol 95', 'Gasohol E20', 'Benzine 95'],
+  ETC: ['อื่นๆ']
+};
+
+let state = {
+  cars: [],
+  currentCarId: null,
+  editCarId: null,
+};
+
+function loadState() {
+  const saved = localStorage.getItem('poonfuel');
+  if (saved) state = JSON.parse(saved);
+}
+function saveState() {
+  localStorage.setItem('poonfuel', JSON.stringify(state));
+}
+function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+// ======== NAVIGATION ========
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function goBack() {
+  state.currentCarId = null;
+  document.getElementById('mainHeader').innerHTML = `<div class="app-logo">POON<span>*</span>FUEL</div>`;
+  showScreen('screenCars');
+  renderCars();
+}
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tabRecords').style.display = tab === 'records' ? 'block' : 'none';
+  document.getElementById('tabStats').style.display = tab === 'stats' ? 'block' : 'none';
+  if (tab === 'stats') renderStats();
+}
+
+// ======== MODAL ========
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+// ======== TOAST ========
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 2500);
+}
+
+// ======== CARS ========
+function renderCars() {
+  const grid = document.getElementById('carGrid');
+  if (!state.cars.length) {
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🚗</div><div class="empty-title">ยังไม่มีรถ</div><div class="empty-sub">กดปุ่ม + เพื่อเพิ่มรถคันแรก</div></div>`;
+    return;
+  }
+  grid.innerHTML = state.cars.map(car => {
+    const recs = car.records || [];
+    return `<div class="car-card" onclick="openCar('${car.id}')">
+      <div class="car-icon">🚘</div>
+      <div class="car-info">
+        <div class="car-name">${car.brand} ${car.model}</div>
+        <div class="car-sub">${car.year} · ${car.owner} · ${recs.length} ครั้งที่เติม</div>
+      </div>
+      <div class="car-actions" onclick="event.stopPropagation()">
+        <button class="icon-btn edit" onclick="openEditCar('${car.id}')">✏️</button>
+        <button class="icon-btn" onclick="confirmDeleteCar('${car.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openAddCar() {
+  state.editCarId = null;
+  document.getElementById('carModalTitle').textContent = 'เพิ่มรถใหม่';
+  ['carBrand','carModel','carYear','carOwner'].forEach(id => document.getElementById(id).value = '');
+  openModal('modalCar');
+}
+function openEditCar(id) {
+  const car = state.cars.find(c => c.id === id);
+  if (!car) return;
+  state.editCarId = id;
+  document.getElementById('carModalTitle').textContent = 'แก้ไขข้อมูลรถ';
+  document.getElementById('carBrand').value = car.brand;
+  document.getElementById('carModel').value = car.model;
+  document.getElementById('carYear').value = car.year;
+  document.getElementById('carOwner').value = car.owner;
+  openModal('modalCar');
+}
+function saveCar() {
+  const brand = document.getElementById('carBrand').value.trim();
+  const model = document.getElementById('carModel').value.trim();
+  const year = document.getElementById('carYear').value.trim();
+  const owner = document.getElementById('carOwner').value.trim();
+  if (!brand || !model) { showToast('กรุณากรอกยี่ห้อและรุ่นรถ'); return; }
+  if (state.editCarId) {
+    const car = state.cars.find(c => c.id === state.editCarId);
+    if (car) { car.brand = brand; car.model = model; car.year = year; car.owner = owner; }
+  } else {
+    state.cars.push({ id: genId(), brand, model, year, owner, records: [] });
+  }
+  saveState(); closeModal('modalCar'); renderCars();
+  showToast(state.editCarId ? 'แก้ไขแล้ว' : 'เพิ่มรถแล้ว');
+}
+function confirmDeleteCar(id) {
+  const car = state.cars.find(c => c.id === id);
+  document.getElementById('confirmMsg').textContent = `ลบรถ ${car.brand} ${car.model}? ข้อมูลทั้งหมดจะหายไป`;
+  document.getElementById('confirmBtn').onclick = () => { deleteCar(id); closeModal('modalConfirm'); };
+  openModal('modalConfirm');
+}
+function deleteCar(id) {
+  state.cars = state.cars.filter(c => c.id !== id);
+  saveState(); renderCars(); showToast('ลบรถแล้ว');
+}
+function openCar(id) {
+  state.currentCarId = id;
+  const car = state.cars.find(c => c.id === id);
+  document.getElementById('mainHeader').innerHTML = `
+    <button class="back-btn" onclick="goBack()">←</button>
+    <div class="header-title">${car.brand} ${car.model}</div>
+    <div class="app-logo" style="font-size:14px;">POON<span style="color:var(--accent2)">*</span>FUEL</div>`;
+  showScreen('screenRecords');
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===0));
+  document.getElementById('tabRecords').style.display = 'block';
+  document.getElementById('tabStats').style.display = 'none';
+  renderRecords();
+}
+
+// ======== RECORDS ========
+function currentCar() { return state.cars.find(c => c.id === state.currentCarId); }
+
+function renderRecords() {
+  const car = currentCar();
+  const recs = (car.records || []).slice().sort((a,b) => new Date(b.date) - new Date(a.date));
+  const list = document.getElementById('recList');
+  if (!recs.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">⛽</div><div class="empty-title">ยังไม่มีบันทึก</div><div class="empty-sub">กดปุ่ม + เพื่อเริ่มบันทึกการเติมน้ำมัน</div></div>`;
+    return;
+  }
+  list.innerHTML = recs.map(r => {
+    const liters = r.pricePerL > 0 ? (r.totalCost / r.pricePerL) : 0;
+    return `<div class="rec-card">
+      <div class="rec-header">
+        <div>
+          <div style="font-weight:600; font-size:14px;">${r.station} · ${r.fuelType}</div>
+          <div class="rec-date">${formatDate(r.date)}</div>
+        </div>
+        <span class="rec-fuel-badge">${r.pricePerL ? r.pricePerL.toFixed(2)+' ฿/L' : '-'}</span>
+      </div>
+      <div style="display:flex; gap:12px; margin-bottom:10px;">
+        <div style="flex:1; background:var(--accent-light); border-radius:8px; padding:10px; text-align:center;">
+          <div style="font-size:18px; font-weight:700; color:var(--accent); font-family:'DM Mono',monospace;">${liters.toFixed(2)}</div>
+          <div style="font-size:11px; color:var(--text-muted);">ลิตร</div>
+        </div>
+        <div style="flex:1; background:var(--surface2); border-radius:8px; padding:10px; text-align:center;">
+          <div style="font-size:18px; font-weight:700; font-family:'DM Mono',monospace;">${r.totalCost ? r.totalCost.toFixed(0) : '-'}</div>
+          <div style="font-size:11px; color:var(--text-muted);">บาท</div>
+        </div>
+        <div style="flex:1; background:var(--surface2); border-radius:8px; padding:10px; text-align:center;">
+          <div style="font-size:18px; font-weight:700; font-family:'DM Mono',monospace;">${r.kmDriven || '-'}</div>
+          <div style="font-size:11px; color:var(--text-muted);">กม./ถัง</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="openDetail('${r.id}')">รายละเอียด</button>
+        <button class="btn btn-secondary btn-sm" onclick="openEditRecord('${r.id}')">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmDeleteRecord('${r.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function formatDate(d) {
+  if (!d) return '-';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('th-TH', { year:'numeric', month:'short', day:'numeric' });
+}
+function daysBetween(d1, d2) {
+  return Math.round(Math.abs((new Date(d2) - new Date(d1)) / 86400000));
+}
+
+function updateFuelTypes() {
+  const station = document.getElementById('recStation').value;
+  const sel = document.getElementById('recFuelType');
+  if (!station || !FUEL_TYPES[station]) {
+    sel.innerHTML = '<option value="">-- เลือกปั๊มก่อน --</option>';
+    return;
+  }
+  sel.innerHTML = FUEL_TYPES[station].map(f => `<option value="${f}">${f}</option>`).join('');
+}
+function calcLiters() {
+  const ppl = parseFloat(document.getElementById('recPricePerL').value);
+  const total = parseFloat(document.getElementById('recTotalCost').value);
+  const el = document.getElementById('litersCalc');
+  if (ppl > 0 && total > 0) {
+    el.textContent = `⛽ ปริมาณ: ${(total/ppl).toFixed(2)} ลิตร`;
+  } else {
+    el.textContent = '⛽ ปริมาณ: — ลิตร';
+  }
+}
+function openAddRecord() {
+  document.getElementById('recEditId').value = '';
+  document.getElementById('recModalTitle').textContent = 'บันทึกการเติมน้ำมัน';
+  document.getElementById('recDate').value = new Date().toISOString().slice(0,10);
+  document.getElementById('recStation').value = '';
+  document.getElementById('recFuelType').innerHTML = '<option value="">-- เลือกปั๊มก่อน --</option>';
+  ['recPricePerL','recTotalCost','recRangeLeft','recKmDriven','recOdo','recAvgCar','recRangeAfter'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('litersCalc').textContent = '⛽ ปริมาณ: — ลิตร';
+  openModal('modalRecord');
+}
+function openEditRecord(id) {
+  const car = currentCar();
+  const r = car.records.find(r => r.id === id);
+  if (!r) return;
+  document.getElementById('recEditId').value = id;
+  document.getElementById('recModalTitle').textContent = 'แก้ไขการเติมน้ำมัน';
+  document.getElementById('recDate').value = r.date;
+  document.getElementById('recStation').value = r.station;
+  updateFuelTypes();
+  document.getElementById('recFuelType').value = r.fuelType;
+  document.getElementById('recPricePerL').value = r.pricePerL;
+  document.getElementById('recTotalCost').value = r.totalCost;
+  document.getElementById('recRangeLeft').value = r.rangeLeft;
+  document.getElementById('recKmDriven').value = r.kmDriven;
+  document.getElementById('recOdo').value = r.odo;
+  document.getElementById('recAvgCar').value = r.avgCar;
+  document.getElementById('recRangeAfter').value = r.rangeAfter;
+  calcLiters();
+  openModal('modalRecord');
+}
+function saveRecord() {
+  const station = document.getElementById('recStation').value;
+  const fuelType = document.getElementById('recFuelType').value;
+  const date = document.getElementById('recDate').value;
+  const pricePerL = parseFloat(document.getElementById('recPricePerL').value);
+  const totalCost = parseFloat(document.getElementById('recTotalCost').value);
+  if (!station || !fuelType || !date || !pricePerL || !totalCost) {
+    showToast('กรุณากรอกข้อมูลให้ครบ'); return;
+  }
+  const rec = {
+    id: document.getElementById('recEditId').value || genId(),
+    station, fuelType, date, pricePerL, totalCost,
+    liters: totalCost / pricePerL,
+    rangeLeft: parseFloat(document.getElementById('recRangeLeft').value) || 0,
+    kmDriven: parseFloat(document.getElementById('recKmDriven').value) || 0,
+    odo: parseFloat(document.getElementById('recOdo').value) || 0,
+    avgCar: parseFloat(document.getElementById('recAvgCar').value) || 0,
+    rangeAfter: parseFloat(document.getElementById('recRangeAfter').value) || 0,
+  };
+  const car = currentCar();
+  const editId = document.getElementById('recEditId').value;
+  if (editId) {
+    const idx = car.records.findIndex(r => r.id === editId);
+    if (idx >= 0) car.records[idx] = rec;
+  } else {
+    car.records.push(rec);
+  }
+  saveState();
+  closeModal('modalRecord');
+  renderRecords();
+  showReport(rec);
+}
+function confirmDeleteRecord(id) {
+  document.getElementById('confirmMsg').textContent = 'ลบบันทึกการเติมน้ำมันนี้?';
+  document.getElementById('confirmBtn').onclick = () => { deleteRecord(id); closeModal('modalConfirm'); };
+  openModal('modalConfirm');
+}
+function deleteRecord(id) {
+  const car = currentCar();
+  car.records = car.records.filter(r => r.id !== id);
+  saveState(); renderRecords(); showToast('ลบบันทึกแล้ว');
+}
+
+// ======== REPORT ========
+function showReport(newRec) {
+  const car = currentCar();
+  const recs = (car.records || []).slice().sort((a,b) => new Date(a.date)-new Date(b.date));
+  const newIdx = recs.findIndex(r => r.id === newRec.id);
+  const prev = newIdx > 0 ? recs[newIdx-1] : null;
+
+  // Calc actual km/l
+  const actualKmL = (newRec.liters > 0 && newRec.kmDriven > 0) ? (newRec.kmDriven / newRec.liters) : null;
+  const carAvg = newRec.avgCar;
+  const diff = (actualKmL && carAvg) ? (actualKmL - carAvg) : null;
+
+  // Price vs prev same fuel
+  let priceChange = null, prevSameFuel = null;
+  if (prev) {
+    const sameRecs = recs.filter(r => r.fuelType === newRec.fuelType && r.id !== newRec.id);
+    if (sameRecs.length) {
+      prevSameFuel = sameRecs[sameRecs.length-1];
+      priceChange = newRec.pricePerL - prevSameFuel.pricePerL;
+    }
+  }
+
+  // Days since last fill
+  let daysGap = null, dailyCost = null;
+  if (prev) {
+    daysGap = daysBetween(prev.date, newRec.date);
+    if (daysGap > 0) dailyCost = (prev.totalCost / daysGap).toFixed(0);
+  }
+
+  // Top 3 fuel types by count
+  const fuelCount = {};
+  recs.forEach(r => { const k = `${r.station} ${r.fuelType}`; fuelCount[k] = (fuelCount[k]||0)+1; });
+  const top3Fuel = Object.entries(fuelCount).sort((a,b)=>b[1]-a[1]).slice(0,3);
+
+  // Top 3 value (km per 1 baht)
+  const fuelValue = {};
+  recs.forEach(r => {
+    if (r.kmDriven > 0 && r.totalCost > 0) {
+      const k = `${r.station} ${r.fuelType}`;
+      if (!fuelValue[k]) fuelValue[k] = { total: 0, count: 0 };
+      fuelValue[k].total += r.kmDriven / r.totalCost;
+      fuelValue[k].count++;
+    }
+  });
+  const top3Value = Object.entries(fuelValue).map(([k,v]) => [k, v.total/v.count]).sort((a,b)=>b[1]-a[1]).slice(0,3);
+
+  let html = '';
+
+  // Actual vs Car avg
+  html += `<div class="report-section"><h4>อัตราสิ้นเปลือง</h4>`;
+  html += `<div class="report-row"><span class="report-key">คำนวณจริง (App)</span><span class="report-val">${actualKmL ? actualKmL.toFixed(2)+' km/L' : '—'}</span></div>`;
+  html += `<div class="report-row"><span class="report-key">รถบอก (หน้าปัด)</span><span class="report-val">${carAvg ? carAvg.toFixed(2)+' km/L' : '—'}</span></div>`;
+  if (diff !== null) {
+    html += `<div class="report-row"><span class="report-key">ต่างกัน</span><span class="report-val ${diff>=0?'down':'up'}">${diff>=0?'+':''}${diff.toFixed(2)} km/L</span></div>`;
+  }
+  html += `</div>`;
+
+  // Price change
+  html += `<div class="report-section"><h4>ราคาน้ำมัน (${newRec.fuelType})</h4>`;
+  html += `<div class="report-row"><span class="report-key">ราคาครั้งนี้</span><span class="report-val">${newRec.pricePerL.toFixed(2)} ฿/L</span></div>`;
+  if (prevSameFuel) {
+    html += `<div class="report-row"><span class="report-key">ครั้งก่อน</span><span class="report-val">${prevSameFuel.pricePerL.toFixed(2)} ฿/L</span></div>`;
+    html += `<div class="report-row"><span class="report-key">เปลี่ยนแปลง</span><span class="report-val ${priceChange>=0?'up':'down'}">${priceChange>=0?'▲ +':'▼ '}${Math.abs(priceChange).toFixed(2)} ฿/L</span></div>`;
+  } else {
+    html += `<div class="report-row"><span class="report-key" style="font-style:italic;">ไม่มีข้อมูลก่อนหน้า</span><span></span></div>`;
+  }
+  html += `</div>`;
+
+  // Days & daily cost
+  html += `<div class="report-section"><h4>ระยะเวลา</h4>`;
+  if (daysGap !== null) {
+    html += `<div class="report-row"><span class="report-key">ห่างจากครั้งก่อน</span><span class="report-val">${daysGap} วัน</span></div>`;
+    html += `<div class="report-row"><span class="report-key">ค่าน้ำมันต่อวัน (ถังก่อน)</span><span class="report-val">${dailyCost} ฿/วัน</span></div>`;
+  } else {
+    html += `<div class="report-row"><span class="report-key" style="font-style:italic;">บันทึกแรก ยังไม่มีข้อมูลเปรียบเทียบ</span><span></span></div>`;
+  }
+  html += `</div>`;
+
+  // Top 3 fuel
+  html += `<div class="report-section"><h4>Top 3 น้ำมันจากปั๊มที่เติมบ่อย</h4>`;
+  top3Fuel.forEach(([name,cnt],i) => {
+    html += `<div class="top3-item"><div class="top3-rank rank-${i+1}">${i+1}</div><div class="top3-name">${name}</div><div class="top3-val">${cnt} ครั้ง</div></div>`;
+  });
+  if (!top3Fuel.length) html += `<div style="color:var(--text-muted);font-size:13px;">ยังไม่มีข้อมูล</div>`;
+  html += `</div>`;
+
+  // Top 3 value
+  html += `<div class="report-section"><h4>Top 3 น้ำมันคุ้มค่าที่สุด</h4>`;
+  top3Value.forEach(([name,val],i) => {
+    html += `<div class="top3-item"><div class="top3-rank rank-${i+1}">${i+1}</div><div class="top3-name">${name}</div><div class="top3-val">${(val*100).toFixed(1)} กม./100฿</div></div>`;
+  });
+  if (!top3Value.length) html += `<div style="color:var(--text-muted);font-size:13px;">ยังไม่มีข้อมูล</div>`;
+  html += `</div>`;
+
+  document.getElementById('reportContent').innerHTML = html;
+  openModal('modalReport');
+}
+
+// ======== DETAIL ========
+function openDetail(id) {
+  const car = currentCar();
+  const r = car.records.find(r => r.id === id);
+  if (!r) return;
+  const html = `
+    <div class="report-section"><h4>ข้อมูลการเติม</h4>
+      <div class="report-row"><span class="report-key">วันที่</span><span class="report-val">${formatDate(r.date)}</span></div>
+      <div class="report-row"><span class="report-key">ปั๊ม</span><span class="report-val">${r.station}</span></div>
+      <div class="report-row"><span class="report-key">น้ำมัน</span><span class="report-val">${r.fuelType}</span></div>
+      <div class="report-row"><span class="report-key">ราคา/ลิตร</span><span class="report-val">${r.pricePerL} ฿</span></div>
+      <div class="report-row"><span class="report-key">ยอดที่เติม</span><span class="report-val">${r.totalCost} ฿</span></div>
+      <div class="report-row"><span class="report-key">ปริมาณ</span><span class="report-val">${r.liters.toFixed(2)} ลิตร</span></div>
+    </div>
+    <div class="report-section"><h4>ระยะทาง</h4>
+      <div class="report-row"><span class="report-key">ODO ปัจจุบัน</span><span class="report-val">${r.odo} กม.</span></div>
+      <div class="report-row"><span class="report-key">วิ่งในถังก่อน</span><span class="report-val">${r.kmDriven} กม.</span></div>
+      <div class="report-row"><span class="report-key">Range Left</span><span class="report-val">${r.rangeLeft} กม.</span></div>
+      <div class="report-row"><span class="report-key">Range หลังเติม</span><span class="report-val">${r.rangeAfter} กม.</span></div>
+      <div class="report-row"><span class="report-key">AVG รถระบุ</span><span class="report-val">${r.avgCar} km/L</span></div>
+      <div class="report-row"><span class="report-key">AVG จริง (App)</span><span class="report-val">${r.liters>0&&r.kmDriven>0?(r.kmDriven/r.liters).toFixed(2)+' km/L':'—'}</span></div>
+    </div>`;
+  document.getElementById('detailContent').innerHTML = html;
+  openModal('modalDetail');
+}
+
+// ======== STATS ========
+function renderStats() {
+  const car = currentCar();
+  const recs = (car.records || []).slice().sort((a,b) => new Date(a.date)-new Date(b.date));
+  const content = document.getElementById('statsContent');
+  if (!recs.length) {
+    content.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">ยังไม่มีข้อมูล</div><div class="empty-sub">บันทึกการเติมน้ำมันก่อนเพื่อดูสถิติ</div></div>`;
+    return;
+  }
+  const totalL = recs.reduce((s,r) => s+r.liters, 0);
+  const totalCost = recs.reduce((s,r) => s+r.totalCost, 0);
+  const totalKm = recs.reduce((s,r) => s+r.kmDriven, 0);
+  const firstDate = recs[0].date;
+  const lastDate = recs[recs.length-1].date;
+
+  // Avg km/l
+  const avgKmL = totalKm > 0 && totalL > 0 ? (totalKm/totalL) : 0;
+
+  // Top 3 fuel count
+  const fuelCount = {};
+  recs.forEach(r => { const k = `${r.station} ${r.fuelType}`; fuelCount[k] = (fuelCount[k]||0)+1; });
+  const top3Fuel = Object.entries(fuelCount).sort((a,b)=>b[1]-a[1]).slice(0,3);
+
+  // Top 3 station
+  const stCount = {};
+  recs.forEach(r => { stCount[r.station] = (stCount[r.station]||0)+1; });
+  
+
+  // Top 3 value
+  const fuelValue = {};
+  recs.forEach(r => {
+    if (r.kmDriven > 0 && r.totalCost > 0) {
+      const k = `${r.station} ${r.fuelType}`;
+      if (!fuelValue[k]) fuelValue[k] = { total: 0, count: 0 };
+      fuelValue[k].total += r.kmDriven / r.totalCost;
+      fuelValue[k].count++;
+    }
+  });
+  const top3Value = Object.entries(fuelValue).map(([k,v]) => [k, v.total/v.count]).sort((a,b)=>b[1]-a[1]).slice(0,3);
+
+  let html = `
+    <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px; font-family:'DM Mono',monospace;">
+      ${formatDate(firstDate)} — ${formatDate(lastDate)}
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">น้ำมันทั้งหมด</div>
+        <div class="stat-val green">${totalL.toFixed(1)}</div>
+        <div class="stat-sub">ลิตร</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">ค่าใช้จ่ายรวม</div>
+        <div class="stat-val gold">${totalCost.toLocaleString('th')}</div>
+        <div class="stat-sub">บาท</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">จำนวนครั้งเติม</div>
+        <div class="stat-val">${recs.length}</div>
+        <div class="stat-sub">ถัง</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">ระยะรวม</div>
+        <div class="stat-val">${totalKm.toLocaleString('th')}</div>
+        <div class="stat-sub">กิโลเมตร</div>
+      </div>
+      <div class="stat-card full">
+        <div class="stat-label">อัตราสิ้นเปลือง (เฉลี่ย)</div>
+        <div class="stat-val green">${avgKmL.toFixed(2)}</div>
+        <div class="stat-sub">km/L ตลอดการบันทึก</div>
+      </div>
+    </div>
+
+    <div class="section-title">Top 3 น้ำมันจากปั๊มที่เติมบ่อย</div>
+    <div class="form-section" style="padding:16px;">
+      ${top3Fuel.map(([name,cnt],i) => `<div class="top3-item"><div class="top3-rank rank-${i+1}">${i+1}</div><div class="top3-name">${name}</div><div class="top3-val">${cnt} ครั้ง</div></div>`).join('')}
+    </div>
+    <div class="section-title">Top 3 น้ำมันคุ้มค่าที่สุด</div>
+    <div class="form-section" style="padding:16px;">
+      ${top3Value.length ? top3Value.map(([name,val],i) => `<div class="top3-item"><div class="top3-rank rank-${i+1}">${i+1}</div><div class="top3-name">${name}</div><div class="top3-val">${(val*100).toFixed(1)} กม./100฿</div></div>`).join('') : '<div style="color:var(--text-muted);font-size:13px;">ยังไม่มีข้อมูลระยะทาง</div>'}
+    </div>
+  `;
+  content.innerHTML = html;
+}
+
+
+function exportPDF() {
+  const car = currentCar();
+  if (!car || !car.records || !car.records.length) {
+    showToast('ยังไม่มีข้อมูลสำหรับ export');
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(18);
+  doc.text(`POON FUEL REPORT`, 105, 18, { align: 'center' });
+
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`${car.brand} ${car.model} (${car.year || '-'})`, 105, 26, { align: 'center' });
+
+  const rows = car.records.map((r, i) => [
+    i + 1,
+    formatDate(r.date),
+    r.station,
+    r.fuelType,
+    r.pricePerL?.toFixed(2) || '-',
+    r.totalCost?.toFixed(0) || '-',
+    r.liters?.toFixed(2) || '-',
+    r.kmDriven || '-',
+    r.avgCar?.toFixed(2) || '-'
+  ]);
+
+  doc.autoTable({
+    startY: 34,
+    head: [[
+      '#',
+      'Date',
+      'Station',
+      'Fuel',
+      '฿/L',
+      'Cost',
+      'Liters',
+      'KM',
+      'AVG'
+    ]],
+    body: rows,
+    styles: {
+      halign: 'center',
+      valign: 'middle',
+      fontSize: 9,
+      cellPadding: 3,
+      lineColor: [180,180,180],
+      lineWidth: 0.2
+    },
+    headStyles: {
+      fillColor: [40, 40, 40],
+      halign: 'center',
+      fontStyle: 'bold'
+    },
+    alternateRowStyles: {
+      fillColor: [245,245,245]
+    },
+    margin: { left: 10, right: 10 }
+  });
+
+  doc.save(`POONFUEL_${car.brand}_${car.model}.pdf`);
+}
+
+
+// ======== INIT ========
+loadState();
+renderCars();
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { 
+    getAuth,
+    RecaptchaVerifier,
+    signInWithPhoneNumber,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  // ใส่ Firebase Config จริงของคุณตรงนี้
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+    size: 'normal'
+  });
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      document.getElementById('authOverlay').style.display = 'none';
+    }
+  });
+
+  window.sendOTP = async function() {
+    const phoneNumber = document.getElementById('phoneNumber').value;
+    if (!phoneNumber) {
+      alert('กรุณากรอกเบอร์มือถือ');
+      return;
+    }
+
+    try {
+      const confirmationResult = await signInWithPhoneNumber(
+        auth,
+        phoneNumber,
+        window.recaptchaVerifier
+      );
+
+      window.confirmationResult = confirmationResult;
+      alert('ส่ง OTP แล้ว');
+    } catch (error) {
+      console.error(error);
+      alert('ส่ง OTP ไม่สำเร็จ: ' + error.message);
+    }
+  }
+
+  window.verifyOTP = async function() {
+    const code = document.getElementById('otpCode').value;
+
+    try {
+      await window.confirmationResult.confirm(code);
+      alert('เข้าสู่ระบบสำเร็จ');
+    } catch (error) {
+      console.error(error);
+      alert('OTP ไม่ถูกต้อง');
+    }
+  }
+</script>
+
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+import { 
+  getAuth,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBcYJcFVEyHXb1cvxNAVABhUOWLpv4aa80",
+  authDomain: "poonfuel.firebaseapp.com",
+  projectId: "poonfuel",
+  storageBucket: "poonfuel.firebasestorage.app",
+  messagingSenderId: "1069277350906",
+  appId: "1:1069277350906:web:937c61f1db668530813243",
+  measurementId: "G-Z37SEJHNMB"
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
+
+window.firebaseAuth = auth;
+
+window.onload = () => {
+  if (!document.getElementById('recaptcha-container')) {
+    const recaptchaDiv = document.createElement('div');
+    recaptchaDiv.id = 'recaptcha-container';
+    recaptchaDiv.style.marginTop = '12px';
+    document.body.appendChild(recaptchaDiv);
+  }
+
+  window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+    size: 'normal',
+    callback: () => {
+      console.log('reCAPTCHA solved');
+    }
+  });
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      console.log("Logged in:", user.phoneNumber);
+    }
+  });
+};
+
+window.sendOTP = async function() {
+  const phone = document.getElementById('phoneNumber').value;
+  if (!phone) {
+    alert('กรุณากรอกเบอร์โทร');
+    return;
+  }
+
+  try {
+    const confirmationResult = await signInWithPhoneNumber(
+      auth,
+      phone,
+      window.recaptchaVerifier
+    );
+
+    window.confirmationResult = confirmationResult;
+    alert('ส่ง OTP แล้ว');
+  } catch (err) {
+    console.error(err);
+    alert('ส่ง OTP ไม่สำเร็จ');
+  }
+}
+
+window.verifyOTP = async function() {
+  const code = document.getElementById('otpCode').value;
+
+  try {
+    await window.confirmationResult.confirm(code);
+    alert('เข้าสู่ระบบสำเร็จ');
+    document.getElementById('authSection').style.display = 'none';
+  } catch (err) {
+    console.error(err);
+    alert('OTP ไม่ถูกต้อง');
+  }
+}
+
+window.logoutFirebase = async function() {
+  await signOut(auth);
+  alert('ออกจากระบบแล้ว');
+}
+</script>
+
+</body>
+
+</html>
