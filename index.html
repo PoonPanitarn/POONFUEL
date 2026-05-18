@@ -360,7 +360,7 @@
       <label>เบอร์มือถือ</label>
       <input type="tel" id="phoneNumber" placeholder="+66xxxxxxxxx">
     </div>
-    <div id="recaptcha-container" style="margin:12px 0;"></div>
+    
     <button class="btn btn-primary" onclick="sendOTP()">ส่ง OTP</button>
 
     <div class="divider"></div>
@@ -374,25 +374,31 @@
 </div>
 
 <div id="app">
+
 <div id="authSection" style="background:#1B1E21;padding:20px;border-bottom:1px solid #343A40;">
-  <div style="font-size:18px;font-weight:700;margin-bottom:12px;">เข้าสู่ระบบ</div>
+  <div style="font-size:18px;font-weight:700;margin-bottom:12px;">เข้าสู่ระบบด้วย Email</div>
 
-  <input type="text" id="phoneNumber" placeholder="+66xxxxxxxxx"
+  <input type="email" id="emailInput" placeholder="your@email.com"
     style="width:100%;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #343A40;background:#262A2E;color:white;">
 
-  <button onclick="sendOTP()" style="width:100%;padding:12px;border:none;border-radius:10px;background:#7BC96F;color:white;font-weight:700;margin-bottom:10px;">
-    ส่ง OTP
-  </button>
-
-  <input type="text" id="otpCode" placeholder="กรอก OTP"
+  <input type="password" id="passwordInput" placeholder="รหัสผ่าน"
     style="width:100%;padding:12px;border-radius:10px;margin-bottom:10px;border:1px solid #343A40;background:#262A2E;color:white;">
 
-  <button onclick="verifyOTP()" style="width:100%;padding:12px;border:none;border-radius:10px;background:#D4AF37;color:white;font-weight:700;">
-    ยืนยัน OTP
-  </button>
+  <div style="display:flex;gap:10px;">
+    <button onclick="registerEmail()" style="flex:1;padding:12px;border:none;border-radius:10px;background:#D4AF37;color:white;font-weight:700;">
+      สมัครสมาชิก
+    </button>
 
-  <div id="recaptcha-container" style="margin-top:12px;"></div>
+    <button onclick="loginEmail()" style="flex:1;padding:12px;border:none;border-radius:10px;background:#7BC96F;color:white;font-weight:700;">
+      Login
+    </button>
+  </div>
+
+  <button onclick="logoutFirebase()" style="width:100%;padding:12px;border:none;border-radius:10px;background:#C0392B;color:white;font-weight:700;margin-top:10px;">
+    Logout
+  </button>
 </div>
+
 
   <!-- HEADER -->
   <div class="app-header" id="mainHeader">
@@ -1161,80 +1167,10 @@ renderCars();
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { 
-    getAuth,
-    RecaptchaVerifier,
-    signInWithPhoneNumber,
-    onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-  // ใส่ Firebase Config จริงของคุณตรงนี้
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-    size: 'normal'
-  });
-
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      document.getElementById('authOverlay').style.display = 'none';
-    }
-  });
-
-  window.sendOTP = async function() {
-    const phoneNumber = document.getElementById('phoneNumber').value;
-    if (!phoneNumber) {
-      alert('กรุณากรอกเบอร์มือถือ');
-      return;
-    }
-
-    try {
-      const confirmationResult = await signInWithPhoneNumber(
-        auth,
-        phoneNumber,
-        window.recaptchaVerifier
-      );
-
-      window.confirmationResult = confirmationResult;
-      alert('ส่ง OTP แล้ว');
-    } catch (error) {
-      console.error(error);
-      alert('ส่ง OTP ไม่สำเร็จ: ' + error.message);
-    }
-  }
-
-  window.verifyOTP = async function() {
-    const code = document.getElementById('otpCode').value;
-
-    try {
-      await window.confirmationResult.confirm(code);
-      alert('เข้าสู่ระบบสำเร็จ');
-    } catch (error) {
-      console.error(error);
-      alert('OTP ไม่ถูกต้อง');
-    }
-  }
-</script>
-
-
-<!-- Firebase SDK -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-import { 
+  import {
   getAuth,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -1255,64 +1191,44 @@ const auth = getAuth(app);
 
 window.firebaseAuth = auth;
 
-window.onload = () => {
-  if (!document.getElementById('recaptcha-container')) {
-    const recaptchaDiv = document.createElement('div');
-    recaptchaDiv.id = 'recaptcha-container';
-    recaptchaDiv.style.marginTop = '12px';
-    document.body.appendChild(recaptchaDiv);
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log("Logged in:", user.email);
+    document.getElementById('authSection').style.display = 'none';
+  } else {
+    document.getElementById('authSection').style.display = 'block';
   }
+});
 
-  window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-    size: 'normal',
-    callback: () => {
-      console.log('reCAPTCHA solved');
-    }
-  });
-
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      console.log("Logged in:", user.phoneNumber);
-    }
-  });
-};
-
-window.sendOTP = async function() {
-  const phone = document.getElementById('phoneNumber').value;
-  if (!phone) {
-    alert('กรุณากรอกเบอร์โทร');
-    return;
-  }
+window.registerEmail = async function() {
+  const email = document.getElementById('emailInput').value;
+  const password = document.getElementById('passwordInput').value;
 
   try {
-    const confirmationResult = await signInWithPhoneNumber(
-      auth,
-      phone,
-      window.recaptchaVerifier
-    );
-
-    window.confirmationResult = confirmationResult;
-    alert('ส่ง OTP แล้ว');
+    await createUserWithEmailAndPassword(auth, email, password);
+    alert('สมัครสมาชิกสำเร็จ');
   } catch (err) {
     console.error(err);
-    alert('ส่ง OTP ไม่สำเร็จ');
+    alert(err.message);
   }
 }
 
-window.verifyOTP = async function() {
-  const code = document.getElementById('otpCode').value;
+window.loginEmail = async function() {
+  const email = document.getElementById('emailInput').value;
+  const password = document.getElementById('passwordInput').value;
 
   try {
-    await window.confirmationResult.confirm(code);
-    alert('เข้าสู่ระบบสำเร็จ');
-    document.getElementById('authSection').style.display = 'none';
+    await signInWithEmailAndPassword(auth, email, password);
+    alert('Login สำเร็จ');
   } catch (err) {
     console.error(err);
-    alert('OTP ไม่ถูกต้อง');
+    alert(err.message);
   }
 }
 
 window.logoutFirebase = async function() {
+
   await signOut(auth);
   alert('ออกจากระบบแล้ว');
 }
