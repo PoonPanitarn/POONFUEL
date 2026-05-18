@@ -558,18 +558,61 @@ const FUEL_TYPES = {
   ETC: ['อื่นๆ']
 };
 
-let state = {
+let state = window.state = {
   cars: [],
   currentCarId: null,
   editCarId: null,
 };
 
-function loadState() {
-  const saved = localStorage.getItem('poonfuel');
-  if (saved) state = JSON.parse(saved);
+async function loadState() {
+
+  // online only (Firestore)
+
+  if (window.firebaseAuth?.currentUser && window.userDocRef) {
+
+    try {
+
+      const { getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+
+      const snap = await getDoc(window.userDocRef);
+
+      if (snap.exists() && snap.data().state) {
+
+        state = window.state = snap.data().state;
+
+        renderCars();
+
+      }
+
+    } catch(e) {
+
+      console.error("Cloud load error:", e);
+
+    }
+  }
 }
-function saveState() {
-  localStorage.setItem('poonfuel', JSON.stringify(state));
+
+async function saveState() {
+
+  // online only (Firestore)
+
+  if (window.firebaseAuth?.currentUser && window.userDocRef) {
+
+    try {
+
+      const { setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+
+      await setDoc(window.userDocRef, {
+        state: state,
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+
+    } catch(e) {
+
+      console.error("Cloud save error:", e);
+
+    }
+  }
 }
 function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 
@@ -1112,6 +1155,7 @@ function exportPDF() {
 // ======== INIT ========
 loadState();
 renderCars();
+window.saveState = saveState;
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1120,23 +1164,20 @@ renderCars();
 <!-- FIREBASE AUTH + FIRESTORE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
 import {
   getAuth,
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut,
-  setPersistence,
-  browserLocalPersistence
+  signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
 
 import {
   getFirestore,
   doc,
   getDoc,
-  setDoc
+  setDoc,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -1151,59 +1192,26 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-
-await setPersistence(auth, browserLocalPersistence);
 const db = getFirestore(app);
 
 window.firebaseAuth = auth;
 
-import {
-  onSnapshot
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-let unsubscribeRealtime = null;
-
 async function loadUserData(uid) {
   const ref = doc(db, "users", uid);
+  const snap = await getDoc(ref);
 
-  if (unsubscribeRealtime) {
-    unsubscribeRealtime();
+  if (snap.exists()) {
+    window.state = snap.data().state || window.state;
+    renderCars();
+  } else {
+    await saveUserData(uid);
   }
-
-  unsubscribeRealtime = onSnapshot(ref, async (snap) => {
-
-    if (snap.exists()) {
-
-      const data = snap.data();
-
-      if (data.state) {
-        window.state = data.state;
-
-        if (typeof renderCars === 'function') {
-          renderCars();
-        }
-
-        if (typeof updateDashboard === 'function') {
-          updateDashboard();
-        }
-      }
-
-    } else {
-
-      await saveUserData(uid);
-
-    }
-
-  });
 }
 
 async function saveUserData(uid) {
-
   await setDoc(doc(db, "users", uid), {
-    state: window.state,
-    updatedAt: new Date().toISOString()
-  }, { merge: true });
-
+    state: window.state
+  });
 }
 
 window.registerEmail = async function () {
@@ -1234,36 +1242,49 @@ window.logoutFirebase = async function () {
 };
 
 onAuthStateChanged(auth, async (user) => {
+
   const authBox = document.getElementById('authScreen');
   const appBox = document.getElementById('app');
 
   if (user) {
+
     authBox.style.display = 'none';
     appBox.style.display = 'block';
 
-    await loadUserData(user.uid);
+    window.userDocRef = doc(db, "users", user.uid);
 
-    const originalSave = window.saveState;
+    // realtime sync across devices
+    onSnapshot(window.userDocRef, async (snap) => {
 
-    window.saveState = async function() {
+      if (snap.exists()) {
 
-      if (typeof originalSave === 'function') {
-        originalSave();
+        const data = snap.data();
+
+        if (data.state) {
+
+          state = window.state = data.state;
+
+          renderCars();
+
+        }
+
+      } else {
+
+        await saveState();
+
       }
 
-      await saveUserData(user.uid);
-
-    };
-
-    window.addEventListener('beforeunload', async () => {
-      await saveUserData(user.uid);
     });
 
+    await loadState();
 
   } else {
+
     appBox.style.display = 'none';
     authBox.style.display = 'flex';
+
   }
+
 });
 </script>
 
