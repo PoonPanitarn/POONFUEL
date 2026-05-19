@@ -1665,6 +1665,9 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 window.firebaseAuth = auth;
 
+// Set local persistence by default so session survives page reloads
+await setPersistence(auth, browserLocalPersistence);
+
 // ======== PIN UTILITIES ========
 async function hashPin(pin) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pin + 'poonfuel_salt'));
