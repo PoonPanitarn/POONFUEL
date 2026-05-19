@@ -563,7 +563,7 @@
 <body>
 
 <!-- AUTH SCREEN -->
-<div id="authScreen">
+<div id="authScreen" style="display:flex;">
   <div class="auth-box">
     <div class="auth-logo">POON<span>*</span>FUEL</div>
     <div class="auth-tagline">ระบบจัดการค่าน้ำมัน</div>
@@ -608,10 +608,10 @@
       <!-- MOBILE HEADER -->
       <div class="app-header">
         <button class="back-btn" id="backBtn" onclick="goBack()" style="display:none;">←</button>
-        <div class="app-logo">POON<span>*</span>FUEL</div>
+        <div class="app-logo" id="headerLogo">POON<span>*</span>FUEL</div>
         <div class="header-title" id="headerTitle"></div>
         <div class="header-actions">
-          <button class="btn btn-sm btn-secondary" onclick="logoutFirebase()">ออก</button>
+          <button class="btn btn-sm btn-secondary" onclick="logoutFirebase()">🚪 ออก</button>
         </div>
       </div>
 
@@ -876,10 +876,12 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
   const backBtn = document.getElementById('backBtn');
   const headerTitle = document.getElementById('headerTitle');
+  const headerLogo = document.getElementById('headerLogo');
   const desktopTitle = document.getElementById('desktopCarTitle');
   if (id === 'carListScreen') {
     backBtn.style.display = 'none';
     headerTitle.textContent = '';
+    if (headerLogo) headerLogo.style.display = '';
     if (desktopTitle) desktopTitle.textContent = 'รถของฉัน';
   } else {
     backBtn.style.display = 'flex';
@@ -887,6 +889,7 @@ function showScreen(id) {
       const car = currentCar();
       const title = car ? `${car.brand} ${car.model}` : '';
       headerTitle.textContent = title;
+      if (headerLogo) headerLogo.style.display = 'none';
       if (desktopTitle) desktopTitle.textContent = title;
     }
   }
@@ -1244,10 +1247,10 @@ function renderStatsTab() {
         <div class="stat-val">${totalKm.toLocaleString('th')}</div>
         <div class="stat-sub">กิโลเมตร</div>
       </div>
-      <div class="stat-card full">
+      <div class="stat-card">
         <div class="stat-label">อัตราสิ้นเปลือง (เฉลี่ย)</div>
         <div class="stat-val green">${avgKmL.toFixed(2)}</div>
-        <div class="stat-sub">km/L ตลอดการบันทึก</div>
+        <div class="stat-sub">km/L</div>
       </div>
     </div>
 
