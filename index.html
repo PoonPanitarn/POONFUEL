@@ -562,6 +562,10 @@
   .app-sidebar { display: none; }
   .desktop-topbar { display: none; }
   .desktop-fab { display: none; }
+  /* dt-hidden: hides a desktop-topbar even on desktop */
+  @media (min-width: 768px) {
+    .dt-hidden { display: none !important; }
+  }
 </style>
 </head>
 <body>
@@ -620,22 +624,27 @@
         </div>
       </div>
 
+      <!-- DESKTOP TOPBAR (outside screens, always visible on desktop) -->
+      <div class="desktop-topbar" id="desktopTopbarList">
+        <div class="desktop-topbar-title">รถของฉัน</div>
+        <button class="desktop-fab" onclick="openCarForm()">＋ เพิ่มรถใหม่</button>
+      </div>
+      <div class="desktop-topbar dt-hidden" id="desktopTopbarDetail">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button onclick="goBack()" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--text);cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;">← กลับ</button>
+          <div class="desktop-topbar-title" id="desktopCarTitle"></div>
+        </div>
+        <button class="desktop-fab" onclick="openRecordForm()">⛽ เติมน้ำมัน</button>
+      </div>
+
       <!-- CAR LIST -->
       <div class="screen active" id="carListScreen">
-        <div class="desktop-topbar">
-          <div class="desktop-topbar-title">รถของฉัน</div>
-          <button class="desktop-fab" onclick="openCarForm()">＋ เพิ่มรถใหม่</button>
-        </div>
         <div id="carListContent"></div>
         <button class="fab" onclick="openCarForm()">+</button>
       </div>
 
       <!-- CAR DETAIL -->
       <div class="screen" id="carDetailScreen">
-        <div class="desktop-topbar">
-          <div class="desktop-topbar-title" id="desktopCarTitle"></div>
-          <button class="desktop-fab" onclick="openRecordForm()">⛽ เติมน้ำมัน</button>
-        </div>
         <div id="carDetailContent"></div>
         <button class="fab" onclick="openRecordForm()">+</button>
       </div>
@@ -879,24 +888,29 @@ function loadState() {
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+
   const backBtn = document.getElementById('backBtn');
   const headerTitle = document.getElementById('headerTitle');
   const headerLogo = document.getElementById('headerLogo');
+  const topbarList = document.getElementById('desktopTopbarList');
+  const topbarDetail = document.getElementById('desktopTopbarDetail');
   const desktopTitle = document.getElementById('desktopCarTitle');
+
   if (id === 'carListScreen') {
     backBtn.style.display = 'none';
     headerTitle.textContent = '';
     if (headerLogo) headerLogo.style.display = '';
-    if (desktopTitle) desktopTitle.textContent = 'รถของฉัน';
-  } else {
+    if (topbarList) topbarList.classList.remove('dt-hidden');
+    if (topbarDetail) topbarDetail.classList.add('dt-hidden');
+  } else if (id === 'carDetailScreen') {
+    const car = currentCar();
+    const title = car ? `${car.brand} ${car.model}` : '';
     backBtn.style.display = 'flex';
-    if (id === 'carDetailScreen') {
-      const car = currentCar();
-      const title = car ? `${car.brand} ${car.model}` : '';
-      headerTitle.textContent = title;
-      if (headerLogo) headerLogo.style.display = 'none';
-      if (desktopTitle) desktopTitle.textContent = title;
-    }
+    headerTitle.textContent = title;
+    if (headerLogo) headerLogo.style.display = 'none';
+    if (topbarList) topbarList.classList.add('dt-hidden');
+    if (topbarDetail) topbarDetail.classList.remove('dt-hidden');
+    if (desktopTitle) desktopTitle.textContent = title;
   }
   renderSidebar();
 }
