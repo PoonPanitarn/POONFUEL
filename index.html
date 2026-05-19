@@ -70,6 +70,134 @@
   }
 
   /* =====================
+     PIN SCREENS
+  ===================== */
+  #pinSetupScreen, #pinUnlockScreen {
+    display: none;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: var(--bg);
+  }
+  .pin-box {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 40px 32px;
+    max-width: 380px;
+    width: 100%;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+  }
+  .pin-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .pin-logo span { color: var(--accent2); }
+  .pin-user-email {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+  }
+  .pin-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .pin-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+  .pin-dots {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  .pin-dot {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: transparent;
+    transition: all 0.15s;
+  }
+  .pin-dot.filled {
+    background: var(--accent);
+    border-color: var(--accent);
+    transform: scale(1.1);
+  }
+  .pin-dot.error {
+    background: var(--danger);
+    border-color: var(--danger);
+  }
+  .pin-keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 260px;
+    margin: 0 auto 20px;
+  }
+  .pin-key {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    height: 60px;
+    font-size: 20px;
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.12s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pin-key:hover { background: var(--border); transform: scale(0.97); }
+  .pin-key:active { transform: scale(0.93); }
+  .pin-key.pin-del { font-size: 18px; color: var(--text-muted); }
+  .pin-key.pin-empty { background: none; border: none; cursor: default; }
+  .pin-key.pin-empty:hover { background: none; transform: none; }
+  .pin-error-msg {
+    font-size: 13px;
+    color: var(--danger);
+    min-height: 20px;
+    margin-bottom: 8px;
+  }
+  .pin-link-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 13px; color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    text-decoration: underline;
+    margin-top: 8px;
+    padding: 4px;
+  }
+  .pin-link-btn:hover { color: var(--text); }
+  .pin-remember-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    text-align: left;
+  }
+  .pin-remember-row input[type=checkbox] {
+    width: 18px; height: 18px; flex-shrink: 0;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .pin-remember-label { font-size: 14px; font-weight: 500; line-height: 1.4; }
+  .pin-remember-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  /* =====================
      DESKTOP LAYOUT (≥768px)
   ===================== */
   #app {
@@ -117,6 +245,50 @@
   .back-btn:hover { background: var(--surface2); }
   .header-title { font-weight: 600; font-size: 15px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .header-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+
+  /* Email + sync status in header */
+  .header-user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+  .header-email {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 130px;
+  }
+  .sync-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .sync-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  /* states set via JS */
+  .sync-badge.synced { color: var(--accent); }
+  .sync-badge.synced .sync-dot { background: var(--accent); }
+  .sync-badge.syncing { color: var(--accent2); }
+  .sync-badge.syncing .sync-dot {
+    background: var(--accent2);
+    animation: syncPulse 1s infinite;
+  }
+  .sync-badge.offline { color: #e87a6f; }
+  .sync-badge.offline .sync-dot { background: #e87a6f; }
+  @keyframes syncPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
 
   /* MAIN CONTENT AREA (mobile) */
   .app-main {
@@ -399,12 +571,83 @@
       <label for="emailInput">อีเมล</label>
       <input type="email" id="emailInput" placeholder="your@email.com">
     </div>
-    <div class="form-group" style="margin-bottom:20px;">
+    <div class="form-group" style="margin-bottom:16px;">
       <label for="passwordInput">รหัสผ่าน</label>
       <input type="password" id="passwordInput" placeholder="••••••••">
     </div>
+    <div class="pin-remember-row" onclick="toggleRememberMe()" style="margin-bottom:20px;">
+      <input type="checkbox" id="rememberMeCheck" onclick="event.stopPropagation()">
+      <div>
+        <div class="pin-remember-label">จดจำฉันในอุปกรณ์นี้</div>
+        <div class="pin-remember-sub">ตั้ง PIN 4 หลักเพื่อเข้าแอพได้เร็วขึ้น</div>
+      </div>
+    </div>
     <button class="btn btn-primary" onclick="loginEmail()">เข้าสู่ระบบ</button>
     <button class="btn btn-secondary" style="margin-top:8px;" onclick="registerEmail()">สมัครสมาชิก</button>
+  </div>
+</div>
+
+<!-- PIN SETUP SCREEN -->
+<div id="pinSetupScreen" style="display:none; min-height:100vh; align-items:center; justify-content:center; padding:20px; background:var(--bg);">
+  <div class="pin-box">
+    <div class="pin-logo">POON<span>*</span>FUEL</div>
+    <div class="pin-user-email" id="pinSetupEmail"></div>
+    <div class="pin-title" id="pinSetupTitle">ตั้ง PIN 4 หลัก</div>
+    <div class="pin-sub" id="pinSetupSub">PIN ช่วยให้เข้าแอพได้เร็วขึ้น<br>โดยไม่ต้องกรอก email ทุกครั้ง</div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="sd0"></div>
+      <div class="pin-dot" id="sd1"></div>
+      <div class="pin-dot" id="sd2"></div>
+      <div class="pin-dot" id="sd3"></div>
+    </div>
+    <div class="pin-error-msg" id="pinSetupError"></div>
+    <div class="pin-keypad">
+      <button class="pin-key" onclick="pinSetupKey('1')">1</button>
+      <button class="pin-key" onclick="pinSetupKey('2')">2</button>
+      <button class="pin-key" onclick="pinSetupKey('3')">3</button>
+      <button class="pin-key" onclick="pinSetupKey('4')">4</button>
+      <button class="pin-key" onclick="pinSetupKey('5')">5</button>
+      <button class="pin-key" onclick="pinSetupKey('6')">6</button>
+      <button class="pin-key" onclick="pinSetupKey('7')">7</button>
+      <button class="pin-key" onclick="pinSetupKey('8')">8</button>
+      <button class="pin-key" onclick="pinSetupKey('9')">9</button>
+      <div class="pin-key pin-empty"></div>
+      <button class="pin-key" onclick="pinSetupKey('0')">0</button>
+      <button class="pin-key pin-del" onclick="pinSetupDel()">⌫</button>
+    </div>
+    <button class="pin-link-btn" onclick="skipPinSetup()">ข้ามขั้นตอนนี้</button>
+  </div>
+</div>
+
+<!-- PIN UNLOCK SCREEN -->
+<div id="pinUnlockScreen" style="display:none; min-height:100vh; align-items:center; justify-content:center; padding:20px; background:var(--bg);">
+  <div class="pin-box">
+    <div class="pin-logo">POON<span>*</span>FUEL</div>
+    <div class="pin-user-email" id="pinUnlockEmail"></div>
+    <div class="pin-title">ยินดีต้อนรับกลับมา</div>
+    <div class="pin-sub">กรอก PIN เพื่อเข้าใช้งาน</div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="ud0"></div>
+      <div class="pin-dot" id="ud1"></div>
+      <div class="pin-dot" id="ud2"></div>
+      <div class="pin-dot" id="ud3"></div>
+    </div>
+    <div class="pin-error-msg" id="pinUnlockError"></div>
+    <div class="pin-keypad">
+      <button class="pin-key" onclick="pinUnlockKey('1')">1</button>
+      <button class="pin-key" onclick="pinUnlockKey('2')">2</button>
+      <button class="pin-key" onclick="pinUnlockKey('3')">3</button>
+      <button class="pin-key" onclick="pinUnlockKey('4')">4</button>
+      <button class="pin-key" onclick="pinUnlockKey('5')">5</button>
+      <button class="pin-key" onclick="pinUnlockKey('6')">6</button>
+      <button class="pin-key" onclick="pinUnlockKey('7')">7</button>
+      <button class="pin-key" onclick="pinUnlockKey('8')">8</button>
+      <button class="pin-key" onclick="pinUnlockKey('9')">9</button>
+      <div class="pin-key pin-empty"></div>
+      <button class="pin-key" onclick="pinUnlockKey('0')">0</button>
+      <button class="pin-key pin-del" onclick="pinUnlockDel()">⌫</button>
+    </div>
+    <button class="pin-link-btn" onclick="useEmailInstead()">ใช้ email แทน (ลืม PIN)</button>
   </div>
 </div>
 
@@ -440,6 +683,13 @@
         <div class="app-logo" id="headerLogo">POON<span>*</span>FUEL</div>
         <div class="header-title" id="headerTitle"></div>
         <div class="header-actions">
+          <div class="header-user-info">
+            <span class="header-email" id="headerEmail"></span>
+            <span class="sync-badge" id="syncBadge">
+              <span class="sync-dot" id="syncDot"></span>
+              <span id="syncText">Synced</span>
+            </span>
+          </div>
           <button class="btn btn-sm btn-danger" onclick="logoutFirebase()" style="gap:4px;">🚪 ออก</button>
         </div>
       </div>
@@ -640,6 +890,23 @@ let state = {
   editingRecordId: null
 };
 
+// ======== SYNC STATUS ========
+function setSyncStatus(status) {
+  // status: 'syncing' | 'synced' | 'offline'
+  const badge = document.getElementById('syncBadge');
+  const text = document.getElementById('syncText');
+  if (!badge || !text) return;
+  badge.className = 'sync-badge ' + status;
+  if (status === 'syncing') text.textContent = 'กำลัง sync...';
+  else if (status === 'synced') text.textContent = 'Synced ✓';
+  else if (status === 'offline') text.textContent = 'ออฟไลน์';
+}
+window.setSyncStatus = setSyncStatus;
+
+// Track online/offline
+window.addEventListener('online',  () => setSyncStatus('synced'));
+window.addEventListener('offline', () => setSyncStatus('offline'));
+
 // ======== TOAST ========
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -693,8 +960,10 @@ function renderSidebar() {
 // ======== SAVE/LOAD ========
 async function saveState() {
   if (window.firebaseAuth && window.firebaseAuth.currentUser && window.userDocRef) {
+    if (window.setSyncStatus) window.setSyncStatus('syncing');
     const { setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
     await setDoc(window.userDocRef, { state: state });
+    if (window.setSyncStatus) window.setSyncStatus('synced');
   } else {
     localStorage.setItem('poonfuel', JSON.stringify(state));
   }
@@ -1360,7 +1629,7 @@ renderCars();
 window.saveState = saveState;
 </script>
 
-<!-- FIREBASE AUTH + FIRESTORE -->
+<!-- FIREBASE AUTH + FIRESTORE + PIN -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -1368,9 +1637,11 @@ import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut
+  signOut,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
 import {
   getFirestore,
   doc,
@@ -1392,80 +1663,227 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-
 window.firebaseAuth = auth;
 
-async function loadUserData(uid) {
-  const ref = doc(db, "users", uid);
-  const snap = await getDoc(ref);
-
-  if (snap.exists()) {
-    window.state = snap.data().state || window.state;
-    renderCars();
-  } else {
-    await saveUserData(uid);
-  }
+// ======== PIN UTILITIES ========
+async function hashPin(pin) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pin + 'poonfuel_salt'));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-async function saveUserData(uid) {
-  await setDoc(doc(db, "users", uid), {
-    state: window.state
+async function savePinToFirestore(pin) {
+  if (!window.userDocRef) return;
+  const hashed = await hashPin(pin);
+  const snap = await getDoc(window.userDocRef);
+  const existing = snap.exists() ? snap.data() : {};
+  await setDoc(window.userDocRef, { ...existing, pinHash: hashed });
+}
+
+async function getPinHashFromFirestore() {
+  if (!window.userDocRef) return null;
+  const snap = await getDoc(window.userDocRef);
+  return snap.exists() ? (snap.data().pinHash || null) : null;
+}
+
+async function removePinFromFirestore() {
+  if (!window.userDocRef) return;
+  const snap = await getDoc(window.userDocRef);
+  if (!snap.exists()) return;
+  const data = snap.data();
+  delete data.pinHash;
+  await setDoc(window.userDocRef, data);
+}
+
+// ======== SCREEN HELPERS ========
+function showOnlyScreen(id) {
+  ['authScreen','pinSetupScreen','pinUnlockScreen'].forEach(s => {
+    document.getElementById(s).style.display = 'none';
   });
+  document.getElementById('app').style.display = 'none';
+  if (id === 'app') {
+    document.getElementById('app').style.display = 'block';
+  } else {
+    document.getElementById(id).style.display = 'flex';
+  }
 }
 
-window.registerEmail = async function () {
-  const email = document.getElementById('emailInput').value;
-  const password = document.getElementById('passwordInput').value;
+// ======== REMEMBER ME CHECKBOX ========
+window.toggleRememberMe = function() {
+  const cb = document.getElementById('rememberMeCheck');
+  cb.checked = !cb.checked;
+};
 
+// ======== LOGIN / REGISTER ========
+window.registerEmail = async function() {
+  const email = document.getElementById('emailInput').value.trim();
+  const password = document.getElementById('passwordInput').value;
+  const remember = document.getElementById('rememberMeCheck').checked;
   try {
+    await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
     await createUserWithEmailAndPassword(auth, email, password);
-    alert('สมัครสมาชิกสำเร็จ');
+    window._wantsPin = remember;
+    showToast('สมัครสมาชิกสำเร็จ');
   } catch (e) {
     alert(e.message);
   }
 };
 
-window.loginEmail = async function () {
-  const email = document.getElementById('emailInput').value;
+window.loginEmail = async function() {
+  const email = document.getElementById('emailInput').value.trim();
   const password = document.getElementById('passwordInput').value;
-
+  const remember = document.getElementById('rememberMeCheck').checked;
   try {
+    await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
     await signInWithEmailAndPassword(auth, email, password);
+    window._wantsPin = remember;
   } catch (e) {
     alert(e.message);
   }
 };
 
-window.logoutFirebase = async function () {
+window.logoutFirebase = async function() {
   await signOut(auth);
+  window._pinUnlocked = false;
   showToast('ออกจากระบบแล้ว');
 };
 
-// Force sign out every time the page loads — user must always login manually
-await signOut(auth);
+// ======== PIN SETUP STATE ========
+let setupBuffer = '';
+let setupFirst = '';
+let setupPhase = 'enter'; // 'enter' | 'confirm'
 
+function updateSetupDots(buf, prefix) {
+  for (let i = 0; i < 4; i++) {
+    const d = document.getElementById(prefix + i);
+    d.classList.toggle('filled', i < buf.length);
+    d.classList.remove('error');
+  }
+}
+
+window.pinSetupKey = function(k) {
+  if (setupBuffer.length >= 4) return;
+  setupBuffer += k;
+  updateSetupDots(setupBuffer, 'sd');
+  if (setupBuffer.length === 4) {
+    setTimeout(async () => {
+      if (setupPhase === 'enter') {
+        setupFirst = setupBuffer;
+        setupBuffer = '';
+        setupPhase = 'confirm';
+        document.getElementById('pinSetupTitle').textContent = 'ยืนยัน PIN อีกครั้ง';
+        document.getElementById('pinSetupSub').textContent = 'กรอก PIN เดิมอีกครั้งเพื่อยืนยัน';
+        document.getElementById('pinSetupError').textContent = '';
+        updateSetupDots('', 'sd');
+      } else {
+        if (setupBuffer === setupFirst) {
+          await savePinToFirestore(setupBuffer);
+          window._pinUnlocked = true;
+          showToast('ตั้ง PIN สำเร็จแล้ว ✅');
+          enterApp(auth.currentUser);
+        } else {
+          document.getElementById('pinSetupError').textContent = 'PIN ไม่ตรงกัน กรุณาลองใหม่';
+          for (let i = 0; i < 4; i++) {
+            const d = document.getElementById('sd' + i);
+            d.classList.add('error'); d.classList.remove('filled');
+          }
+          setTimeout(() => {
+            setupBuffer = ''; setupFirst = ''; setupPhase = 'enter';
+            document.getElementById('pinSetupTitle').textContent = 'ตั้ง PIN 4 หลัก';
+            document.getElementById('pinSetupSub').textContent = 'PIN ช่วยให้เข้าแอพได้เร็วขึ้น\nโดยไม่ต้องกรอก email ทุกครั้ง';
+            document.getElementById('pinSetupError').textContent = '';
+            updateSetupDots('', 'sd');
+          }, 1000);
+        }
+      }
+    }, 80);
+  }
+};
+
+window.pinSetupDel = function() {
+  setupBuffer = setupBuffer.slice(0, -1);
+  updateSetupDots(setupBuffer, 'sd');
+};
+
+window.skipPinSetup = function() {
+  window._pinUnlocked = true;
+  enterApp(auth.currentUser);
+};
+
+// ======== PIN UNLOCK STATE ========
+let unlockBuffer = '';
+
+function updateUnlockDots(buf) {
+  for (let i = 0; i < 4; i++) {
+    const d = document.getElementById('ud' + i);
+    d.classList.toggle('filled', i < buf.length);
+    d.classList.remove('error');
+  }
+}
+
+window.pinUnlockKey = async function(k) {
+  if (unlockBuffer.length >= 4) return;
+  unlockBuffer += k;
+  updateUnlockDots(unlockBuffer);
+  if (unlockBuffer.length === 4) {
+    setTimeout(async () => {
+      const storedHash = await getPinHashFromFirestore();
+      const inputHash = await hashPin(unlockBuffer);
+      if (inputHash === storedHash) {
+        window._pinUnlocked = true;
+        enterApp(auth.currentUser);
+      } else {
+        document.getElementById('pinUnlockError').textContent = 'PIN ไม่ถูกต้อง';
+        for (let i = 0; i < 4; i++) {
+          const d = document.getElementById('ud' + i);
+          d.classList.add('error'); d.classList.remove('filled');
+        }
+        setTimeout(() => {
+          unlockBuffer = '';
+          document.getElementById('pinUnlockError').textContent = '';
+          updateUnlockDots('');
+        }, 900);
+      }
+    }, 80);
+  }
+};
+
+window.pinUnlockDel = function() {
+  unlockBuffer = unlockBuffer.slice(0, -1);
+  updateUnlockDots(unlockBuffer);
+};
+
+window.useEmailInstead = async function() {
+  // Sign out and go back to login — user must re-authenticate
+  await signOut(auth);
+  showOnlyScreen('authScreen');
+};
+
+// ======== ENTER APP (after PIN passed or no PIN) ========
+function enterApp(user) {
+  showOnlyScreen('app');
+  const sidebarUser = document.getElementById('sidebarUserInfo');
+  if (sidebarUser) sidebarUser.textContent = '👤 ' + user.email;
+  const mobileUserInfo = document.getElementById('mobileUserInfo');
+  if (mobileUserInfo) mobileUserInfo.textContent = user.email;
+  // Set email in header
+  const headerEmail = document.getElementById('headerEmail');
+  if (headerEmail) headerEmail.textContent = user.email;
+  // Initial sync status
+  setSyncStatus(navigator.onLine ? 'synced' : 'offline');
+}
+
+// ======== AUTH STATE CHANGED ========
 onAuthStateChanged(auth, async (user) => {
-  const authBox = document.getElementById('authScreen');
-  const appBox = document.getElementById('app');
-
   if (user) {
-    // Reset state to empty before loading user-specific data — prevents cross-user data leakage
+    // Reset state before loading user data
     state = window.state = { cars: [], currentCarId: null, editingCarId: null, editingRecordId: null };
     renderCars();
 
-    authBox.style.display = 'none';
-    appBox.style.display = 'block';
-
-    // Show user email in sidebar and mobile header
-    const sidebarUser = document.getElementById('sidebarUserInfo');
-    if (sidebarUser) sidebarUser.textContent = '👤 ' + user.email;
-    const mobileUserInfo = document.getElementById('mobileUserInfo');
-    if (mobileUserInfo) mobileUserInfo.textContent = user.email;
-
     window.userDocRef = doc(db, "users", user.uid);
 
-    // realtime sync across devices — this is the single source of truth
+    // Start Firestore realtime sync
     onSnapshot(window.userDocRef, async (snap) => {
+      setSyncStatus('syncing');
       if (snap.exists()) {
         const data = snap.data();
         if (data.state) {
@@ -1473,14 +1891,46 @@ onAuthStateChanged(auth, async (user) => {
           renderCars();
         }
       } else {
-        // New user: save the empty state to Firestore
         await saveState();
       }
+      setSyncStatus('synced');
     });
 
+    // Decide which screen to show
+    if (window._pinUnlocked) {
+      // Already unlocked this session (just set up PIN or came from unlock)
+      enterApp(user);
+      return;
+    }
+
+    const pinHash = await getPinHashFromFirestore();
+
+    if (pinHash) {
+      // Has PIN → show unlock screen
+      unlockBuffer = '';
+      updateUnlockDots('');
+      document.getElementById('pinUnlockEmail').textContent = '👤 ' + user.email;
+      document.getElementById('pinUnlockError').textContent = '';
+      showOnlyScreen('pinUnlockScreen');
+    } else if (window._wantsPin) {
+      // Just logged in with "remember me" checked, no PIN yet → setup
+      setupBuffer = ''; setupFirst = ''; setupPhase = 'enter';
+      document.getElementById('pinSetupEmail').textContent = '👤 ' + user.email;
+      document.getElementById('pinSetupTitle').textContent = 'ตั้ง PIN 4 หลัก';
+      document.getElementById('pinSetupSub').textContent = 'PIN ช่วยให้เข้าแอพได้เร็วขึ้น\nโดยไม่ต้องกรอก email ทุกครั้ง';
+      document.getElementById('pinSetupError').textContent = '';
+      updateSetupDots('', 'sd');
+      showOnlyScreen('pinSetupScreen');
+    } else {
+      // No PIN, no remember me → go straight to app
+      window._pinUnlocked = true;
+      enterApp(user);
+    }
+
   } else {
-    appBox.style.display = 'none';
-    authBox.style.display = 'flex';
+    window._pinUnlocked = false;
+    window._wantsPin = false;
+    showOnlyScreen('authScreen');
   }
 });
 </script>
