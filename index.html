@@ -141,218 +141,15 @@
   .fab:hover { transform: scale(1.08) rotate(90deg); background: #6BAF60; }
 
   /* =====================
-     DESKTOP LAYOUT (≥768px)
+     DESKTOP = same as Mobile (no sidebar, no desktop topbar)
   ===================== */
   @media (min-width: 768px) {
+    /* Cap width and center for large screens */
     .app-layout {
-      flex-direction: row;
-    }
-
-    /* SIDEBAR */
-    .app-sidebar {
-      width: var(--sidebar-w);
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: flex;
       flex-direction: column;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      flex-shrink: 0;
-      z-index: 10;
+      max-width: 600px;
+      margin: 0 auto;
     }
-    .sidebar-logo {
-      padding: 24px 20px 20px;
-      font-family: 'Playfair Display', serif;
-      font-size: 20px;
-      font-weight: 700;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-    .sidebar-logo span { color: var(--accent2); }
-    .sidebar-tagline {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 11px;
-      color: var(--text-muted);
-      font-weight: 400;
-      margin-top: 3px;
-      display: block;
-    }
-    .sidebar-nav {
-      flex: 1;
-      padding: 16px 12px;
-      overflow-y: auto;
-    }
-    .sidebar-section-label {
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      padding: 8px 8px 6px;
-      margin-top: 4px;
-    }
-    .sidebar-car-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 10px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.15s;
-      margin-bottom: 2px;
-    }
-    .sidebar-car-item:hover { background: var(--surface2); }
-    .sidebar-car-item.active { background: var(--accent-light); border: 1px solid rgba(123,201,111,0.2); }
-    .sidebar-car-icon { font-size: 16px; flex-shrink: 0; }
-    .sidebar-car-info { flex: 1; min-width: 0; }
-    .sidebar-car-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .sidebar-car-sub { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .sidebar-car-actions { display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s; }
-    .sidebar-car-item:hover .sidebar-car-actions { opacity: 1; }
-    .sidebar-add-btn {
-      margin: 4px 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 10px;
-      border-radius: 10px;
-      cursor: pointer;
-      color: var(--text-muted);
-      font-size: 13px;
-      font-weight: 500;
-      transition: all 0.15s;
-      border: 1px dashed var(--border);
-      width: 100%;
-      background: none;
-      font-family: 'DM Sans', sans-serif;
-    }
-    .sidebar-add-btn:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
-    .sidebar-footer {
-      padding: 16px 12px;
-      border-top: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-
-    /* Hide mobile header on desktop */
-    .app-header { display: none; }
-
-    /* Main content on desktop */
-    .app-main {
-      flex: 1;
-      overflow-y: auto;
-      min-width: 0;
-    }
-
-    /* Desktop content header (inside main) */
-    .desktop-topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 28px;
-      margin-bottom: 4px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    .desktop-topbar-title {
-      font-size: 22px;
-      font-weight: 700;
-      font-family: 'Playfair Display', serif;
-    }
-
-    .screen { padding: 20px 28px 80px; }
-    .screen.active { display: block; }
-
-    /* Desktop: car list as grid */
-    .car-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 14px;
-      margin-top: 8px;
-    }
-
-    /* Desktop: records as table */
-    .rec-table-wrap {
-      overflow-x: auto;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      background: var(--surface);
-      box-shadow: var(--shadow);
-    }
-    .rec-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-    .rec-table th {
-      padding: 11px 14px;
-      text-align: left;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
-      background: var(--surface2);
-    }
-    .rec-table td {
-      padding: 12px 14px;
-      border-bottom: 1px solid rgba(52,58,64,0.5);
-      vertical-align: middle;
-    }
-    .rec-table tr:last-child td { border-bottom: none; }
-    .rec-table tr:hover td { background: rgba(255,255,255,0.02); }
-    .rec-table .mono { font-family: 'DM Mono', monospace; font-size: 12px; }
-    .rec-table .highlight { color: var(--accent); font-weight: 700; }
-
-    /* Desktop: stats grid 3 columns */
-    .stats-grid { grid-template-columns: 1fr 1fr 1fr; }
-    .stat-card.full { grid-column: 1 / -1; }
-
-    /* Desktop: FAB becomes inline button in topbar */
-    .fab { display: none; }
-    .desktop-fab {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 18px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .desktop-fab:hover { background: #6BAF60; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(123,201,111,0.3); }
-
-    /* Desktop logout button */
-    .desktop-logout-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 10px 16px;
-      background: var(--danger-light);
-      color: #e87a6f;
-      border: 1px solid rgba(192,57,43,0.3);
-      border-radius: 10px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .desktop-logout-btn:hover { background: var(--danger); color: #fff; }
-
-    /* Show desktop-only elements */
-    .desktop-topbar { display: flex; }
-    .desktop-fab { display: inline-flex; }
 
     /* Desktop modal: centered, not bottom sheet */
     .modal-overlay {
@@ -1119,7 +916,7 @@ function renderRecordsTab() {
   }
 
   const sorted = [...car.records].sort((a, b) => new Date(b.date) - new Date(a.date));
-  const isDesktop = window.innerWidth >= 768;
+  const isDesktop = false; // always use mobile card layout
 
   const exportBtn = `<div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
     <button class="btn btn-sm btn-gold" onclick="exportPDF()">📄 Export PDF</button>
