@@ -17,10 +17,13 @@
     --accent-light: #1E3421;
     --accent2: #D4AF37;
     --danger: #C0392B;
-    --danger-light: #FDECEA;
-    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+    --danger-light: #2a1210;
+    --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.1);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.3);
     --radius: 14px;
     --radius-sm: 8px;
+    --sidebar-w: 240px;
+    --header-h: 60px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -30,74 +33,359 @@
     min-height: 100vh;
     font-size: 15px;
   }
-  /* APP SHELL */
-  #app { max-width: 480px; margin: 0 auto; min-height: 100vh; background: var(--bg); position: relative; }
-  /* HEADER */
+
+  /* =====================
+     AUTH SCREEN
+  ===================== */
+  #authScreen {
+    display: none;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: var(--bg);
+  }
+  .auth-box {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 40px 32px;
+    max-width: 420px;
+    width: 100%;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+  }
+  .auth-logo {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .auth-logo span { color: var(--accent2); }
+  .auth-tagline {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 36px;
+  }
+
+  /* =====================
+     DESKTOP LAYOUT (≥768px)
+  ===================== */
+  #app {
+    min-height: 100vh;
+    background: var(--bg);
+    position: relative;
+  }
+
+  /* Mobile: stack vertically */
+  .app-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* MOBILE HEADER */
   .app-header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    padding: 16px 20px;
+    padding: 0 16px;
+    height: var(--header-h);
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     position: sticky;
     top: 0;
     z-index: 100;
+    flex-shrink: 0;
   }
   .app-logo {
     font-family: 'Playfair Display', serif;
     font-size: 18px;
     font-weight: 700;
     letter-spacing: -0.5px;
+    white-space: nowrap;
   }
   .app-logo span { color: var(--accent2); }
   .back-btn {
     background: none; border: none; cursor: pointer;
-    width: 32px; height: 32px; border-radius: 8px;
+    width: 34px; height: 34px; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
     color: var(--text); font-size: 18px;
-    transition: background 0.15s;
+    transition: background 0.15s; flex-shrink: 0;
   }
   .back-btn:hover { background: var(--surface2); }
-  .header-title { font-weight: 600; font-size: 15px; flex: 1; }
+  .header-title { font-weight: 600; font-size: 15px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .header-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+
+  /* MAIN CONTENT AREA (mobile) */
+  .app-main {
+    flex: 1;
+    overflow-y: auto;
+  }
+
   /* SCREENS */
-  .screen { display: none; padding: 20px; }
+  .screen { display: none; padding: 16px; }
   .screen.active { display: block; }
+
+  /* FAB */
+  .fab {
+    position: fixed; bottom: 24px; right: 20px;
+    width: 52px; height: 52px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    border: none; cursor: pointer; font-size: 24px;
+    box-shadow: 0 4px 20px rgba(45,80,22,0.5);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; z-index: 50;
+  }
+  .fab:hover { transform: scale(1.08) rotate(90deg); background: #6BAF60; }
+
+  /* =====================
+     DESKTOP LAYOUT (≥768px)
+  ===================== */
+  @media (min-width: 768px) {
+    .app-layout {
+      flex-direction: row;
+    }
+
+    /* SIDEBAR */
+    .app-sidebar {
+      width: var(--sidebar-w);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+    .sidebar-logo {
+      padding: 24px 20px 20px;
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .sidebar-logo span { color: var(--accent2); }
+    .sidebar-tagline {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-top: 3px;
+      display: block;
+    }
+    .sidebar-nav {
+      flex: 1;
+      padding: 16px 12px;
+      overflow-y: auto;
+    }
+    .sidebar-section-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 8px 8px 6px;
+      margin-top: 4px;
+    }
+    .sidebar-car-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-bottom: 2px;
+    }
+    .sidebar-car-item:hover { background: var(--surface2); }
+    .sidebar-car-item.active { background: var(--accent-light); border: 1px solid rgba(123,201,111,0.2); }
+    .sidebar-car-icon { font-size: 16px; flex-shrink: 0; }
+    .sidebar-car-info { flex: 1; min-width: 0; }
+    .sidebar-car-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-car-sub { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-car-actions { display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s; }
+    .sidebar-car-item:hover .sidebar-car-actions { opacity: 1; }
+    .sidebar-add-btn {
+      margin: 4px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s;
+      border: 1px dashed var(--border);
+      width: 100%;
+      background: none;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .sidebar-add-btn:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-light); }
+    .sidebar-footer {
+      padding: 16px 12px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    /* Hide mobile header on desktop */
+    .app-header { display: none; }
+
+    /* Main content on desktop */
+    .app-main {
+      flex: 1;
+      overflow-y: auto;
+      min-width: 0;
+    }
+
+    /* Desktop content header (inside main) */
+    .desktop-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 28px 0;
+      margin-bottom: 4px;
+    }
+    .desktop-topbar-title {
+      font-size: 22px;
+      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .screen { padding: 20px 28px 80px; }
+    .screen.active { display: block; }
+
+    /* Desktop: car list as grid */
+    .car-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    /* Desktop: records as table */
+    .rec-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .rec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .rec-table th {
+      padding: 11px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      background: var(--surface2);
+    }
+    .rec-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(52,58,64,0.5);
+      vertical-align: middle;
+    }
+    .rec-table tr:last-child td { border-bottom: none; }
+    .rec-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .rec-table .mono { font-family: 'DM Mono', monospace; font-size: 12px; }
+    .rec-table .highlight { color: var(--accent); font-weight: 700; }
+
+    /* Desktop: stats grid 3 columns */
+    .stats-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .stat-card.full { grid-column: 1 / -1; }
+
+    /* Desktop: FAB becomes inline button in topbar */
+    .fab { display: none; }
+    .desktop-fab {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .desktop-fab:hover { background: #6BAF60; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(123,201,111,0.3); }
+
+    /* Desktop modal: centered, not bottom sheet */
+    .modal-overlay {
+      align-items: center;
+    }
+    .modal {
+      border-radius: 20px;
+      max-width: 560px;
+      max-height: 85vh;
+    }
+    .modal-handle { display: none; }
+
+    /* Desktop: form 2-column grid inside modal */
+    .form-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 16px;
+    }
+    .form-2col .form-group.span2 { grid-column: 1 / -1; }
+  }
+
+  /* =====================
+     SHARED COMPONENTS
+  ===================== */
   /* CAR CARDS */
   .car-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
   .car-card {
     background: var(--surface);
     border-radius: var(--radius);
-    padding: 18px 20px;
+    padding: 16px 18px;
     border: 1px solid var(--border);
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.18s;
     display: flex;
     align-items: center;
     gap: 14px;
     box-shadow: var(--shadow);
   }
-  .car-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .car-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
   .car-icon {
-    width: 44px; height: 44px;
+    width: 46px; height: 46px;
     background: var(--accent-light);
-    border-radius: 10px;
+    border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 20px; flex-shrink: 0;
+    font-size: 22px; flex-shrink: 0;
   }
-  .car-info { flex: 1; }
-  .car-name { font-weight: 600; font-size: 15px; }
+  .car-info { flex: 1; min-width: 0; }
+  .car-name { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .car-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
-  .car-actions { display: flex; gap: 6px; }
+  .car-actions { display: flex; gap: 6px; flex-shrink: 0; }
   .icon-btn {
     background: none; border: 1px solid var(--border);
     border-radius: 8px; width: 32px; height: 32px;
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 14px; color: var(--text-muted);
+    cursor: pointer; font-size: 13px; color: var(--text-muted);
     transition: all 0.15s;
   }
   .icon-btn:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-light); }
   .icon-btn.edit:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+
   /* BUTTONS */
   .btn {
     display: inline-flex; align-items: center; justify-content: center;
@@ -109,59 +397,78 @@
   .btn-primary:hover { background: #6BAF60; }
   .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
   .btn-secondary:hover { background: var(--border); }
-  .btn-danger { background: var(--danger-light); color: var(--danger); border: 1px solid #f5c6c2; }
+  .btn-danger { background: var(--danger-light); color: #e87a6f; border: 1px solid rgba(192,57,43,0.3); }
   .btn-danger:hover { background: var(--danger); color: #fff; }
   .btn-gold { background: var(--accent2); color: #fff; }
-  .btn-sm { padding: 8px 14px; font-size: 13px; width: auto; }
+  .btn-sm { padding: 7px 13px; font-size: 13px; width: auto; border-radius: 8px; }
+
   /* FORMS */
-  .form-section { background: var(--surface); border-radius: var(--radius); padding: 20px; border: 1px solid var(--border); margin-bottom: 14px; box-shadow: var(--shadow); }
-  .form-section h3 { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; }
-  .form-group { margin-bottom: 14px; }
+  .form-section {
+    background: var(--surface); border-radius: var(--radius);
+    padding: 18px 20px; border: 1px solid var(--border);
+    margin-bottom: 14px; box-shadow: var(--shadow);
+  }
+  .form-section h3 {
+    font-size: 11px; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px;
+  }
+  .form-group { margin-bottom: 13px; }
   .form-group:last-child { margin-bottom: 0; }
-  label { display: block; font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; }
+  label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; letter-spacing: 0.02em; }
   input, select, textarea {
-    width: 100%; padding: 11px 14px;
+    width: 100%; padding: 10px 13px;
     border: 1px solid var(--border); border-radius: 9px;
     font-family: 'DM Sans', sans-serif; font-size: 14px;
-    background: var(--surface); color: var(--text);
-    transition: border 0.15s; outline: none;
+    background: var(--surface2); color: var(--text);
+    transition: border 0.15s, box-shadow 0.15s; outline: none;
   }
-  input:focus, select:focus { border-color: var(--accent); }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(123,201,111,0.12);
+  }
+  select option { background: var(--surface2); }
+  textarea { resize: vertical; }
   .inline-calc {
     background: var(--accent-light);
-    border-radius: 9px; padding: 12px 14px;
-    font-size: 14px; color: var(--accent);
+    border-radius: 9px; padding: 11px 14px;
+    font-size: 13px; color: var(--accent);
     font-family: 'DM Mono', monospace;
-    font-weight: 500; margin-top: 8px;
+    font-weight: 600; margin-top: 8px;
+    border: 1px solid rgba(123,201,111,0.15);
   }
 
   .context-badge {
-    display:inline-block;
-    padding:4px 8px;
-    border-radius:999px;
-    font-size:11px;
-    font-weight:600;
-    margin-bottom:10px;
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 10px;
   }
 
-  /* RECORD LIST */
+  /* RECORD LIST (mobile) */
   .rec-list { display: flex; flex-direction: column; gap: 10px; }
   .rec-card {
     background: var(--surface); border-radius: var(--radius);
-    padding: 16px 18px; border: 1px solid var(--border);
+    padding: 14px 16px; border: 1px solid var(--border);
     box-shadow: var(--shadow);
+    transition: border-color 0.15s;
   }
+  .rec-card:hover { border-color: rgba(123,201,111,0.3); }
   .rec-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
   .rec-date { font-size: 12px; color: var(--text-muted); font-family: 'DM Mono', monospace; }
   .rec-fuel-badge {
-    font-size: 11px; font-weight: 600; padding: 3px 9px;
+    font-size: 10px; font-weight: 700; padding: 3px 8px;
     border-radius: 20px; background: var(--accent-light); color: var(--accent);
+    border: 1px solid rgba(123,201,111,0.2);
   }
-  .rec-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
+  .rec-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
   .rec-row:last-child { margin-bottom: 0; }
   .rec-label { color: var(--text-muted); }
   .rec-val { font-weight: 500; font-family: 'DM Mono', monospace; }
-  .rec-highlight { font-size: 15px; font-weight: 700; color: var(--accent); }
+  .rec-highlight { font-size: 14px; font-weight: 700; color: var(--accent); }
+  .rec-actions { display: flex; gap: 6px; margin-top: 10px; }
+
   /* STATS CARDS */
   .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
   .stat-card {
@@ -170,115 +477,87 @@
     box-shadow: var(--shadow);
   }
   .stat-card.full { grid-column: 1 / -1; }
-  .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .stat-label { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
   .stat-val { font-size: 22px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--text); }
   .stat-val.gold { color: var(--accent2); }
   .stat-val.green { color: var(--accent); }
   .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
   /* TOP 3 */
   .top3-item {
     display: flex; align-items: center; gap: 12px;
-    padding: 11px 0; border-bottom: 1px solid var(--border);
+    padding: 10px 0; border-bottom: 1px solid var(--border);
   }
   .top3-item:last-child { border-bottom: none; padding-bottom: 0; }
   .top3-rank {
     width: 26px; height: 26px; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 13px; flex-shrink: 0;
+    font-weight: 700; font-size: 12px; flex-shrink: 0;
   }
   .rank-1 { background: var(--accent2); color: #fff; }
   .rank-2 { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
   .rank-3 { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
   .top3-name { flex: 1; font-size: 13px; font-weight: 500; }
-  .top3-val { font-size: 13px; font-family: 'DM Mono', monospace; color: var(--text-muted); }
+  .top3-val { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--text-muted); }
+
   /* MODAL */
   .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+    position: fixed; inset: 0; background: rgba(0,0,0,0.55);
     z-index: 200; display: none; align-items: flex-end; justify-content: center;
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(4px);
   }
   .modal-overlay.active { display: flex; }
   .modal {
     background: var(--surface); border-radius: 20px 20px 0 0;
-    padding: 24px 20px; width: 100%; max-width: 480px;
-    max-height: 90vh; overflow-y: auto;
-    animation: slideUp 0.25s ease;
+    padding: 20px 20px 28px; width: 100%; max-width: 480px;
+    max-height: 92vh; overflow-y: auto;
+    animation: slideUp 0.22s ease;
   }
   @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-  .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
-  .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
-  /* FAB */
-  .fab {
-    position: fixed; bottom: 28px; right: calc(50% - 220px);
-    width: 52px; height: 52px; border-radius: 50%;
-    background: var(--accent); color: #fff;
-    border: none; cursor: pointer; font-size: 22px;
-    box-shadow: 0 4px 20px rgba(45,80,22,0.4);
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s; z-index: 50;
-  }
-  .fab:hover { transform: scale(1.05); background: #6BAF60; }
-  @media (max-width: 480px) { .fab { right: 20px; } }
+  .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 18px; }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .modal-header h2 { font-size: 18px; font-weight: 700; }
+  .modal-close { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; width: 30px; height: 30px; cursor: pointer; color: var(--text-muted); font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .modal-close:hover { color: var(--text); background: var(--border); }
+  .modal-footer { display: flex; gap: 8px; margin-top: 4px; }
+
   /* EMPTY STATE */
-  .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
-  .empty-icon { font-size: 40px; margin-bottom: 12px; }
-  .empty-title { font-weight: 600; font-size: 16px; color: var(--text); margin-bottom: 6px; }
-  .empty-sub { font-size: 14px; }
+  .empty-state { text-align: center; padding: 56px 20px; color: var(--text-muted); }
+  .empty-icon { font-size: 44px; margin-bottom: 14px; opacity: 0.7; }
+  .empty-title { font-weight: 700; font-size: 17px; color: var(--text); margin-bottom: 6px; }
+  .empty-sub { font-size: 14px; line-height: 1.5; }
+
   /* TABS */
-  .tabs { display: flex; gap: 4px; background: var(--surface2); border-radius: 10px; padding: 4px; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 3px; background: var(--surface2); border-radius: 10px; padding: 3px; margin-bottom: 16px; }
   .tab-btn {
-    flex: 1; padding: 8px; border: none; border-radius: 7px;
-    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    flex: 1; padding: 8px 10px; border: none; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
     cursor: pointer; background: none; color: var(--text-muted); transition: all 0.15s;
   }
-  .tab-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .tab-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
+
   /* DIVIDER */
-  .divider { height: 1px; background: var(--border); margin: 20px 0; }
-  .section-title { font-size: 13px; color: var(--text-muted); font-weight: 600; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .divider { height: 1px; background: var(--border); margin: 18px 0; }
+  .section-title { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* TOAST */
   .toast {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    background: var(--surface); color: var(--text);
-    padding: 12px 20px; border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    background: var(--surface2); color: var(--text);
+    padding: 11px 20px; border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     font-size: 14px; font-weight: 500;
     z-index: 300; opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 0.25s, transform 0.25s;
     border: 1px solid var(--border);
+    white-space: nowrap;
   }
   .toast.show { opacity: 1; }
 
-  /* AUTH SCREEN */
-  #authScreen {
-    display: none;
-    min-height: 100vh;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: var(--bg);
-  }
-  .auth-box {
-    background: var(--surface);
-    border-radius: var(--radius);
-    padding: 32px 24px;
-    max-width: 400px;
-    width: 100%;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-  }
-  .auth-logo {
-    text-align: center;
-    font-family: 'Playfair Display', serif;
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 8px;
-  }
-  .auth-logo span { color: var(--accent2); }
-  .auth-tagline {
-    text-align: center;
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-bottom: 32px;
-  }
+  /* Desktop sidebar hidden on mobile */
+  .app-sidebar { display: none; }
+  .desktop-topbar { display: none; }
+  .desktop-fab { display: none; }
 </style>
 </head>
 <body>
@@ -303,55 +582,96 @@
 
 <!-- APP -->
 <div id="app" style="display:none;">
-  <!-- HEADER -->
-  <div class="app-header">
-    <button class="back-btn" id="backBtn" onclick="goBack()" style="display:none;">←</button>
-    <div class="app-logo">POON<span>*</span>FUEL</div>
-    <div class="header-title" id="headerTitle"></div>
-    <button class="btn btn-sm btn-secondary" onclick="logoutFirebase()">ออก</button>
-  </div>
+  <div class="app-layout">
 
-  <!-- CAR LIST -->
-  <div class="screen active" id="carListScreen">
-    <div id="carListContent"></div>
-    <button class="fab" onclick="openCarForm()">+</button>
-  </div>
+    <!-- SIDEBAR (desktop only) -->
+    <aside class="app-sidebar">
+      <div class="sidebar-logo">
+        POON<span>*</span>FUEL
+        <span class="sidebar-tagline">ระบบจัดการค่าน้ำมัน</span>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section-label">รถของฉัน</div>
+        <div id="sidebarCarList"></div>
+        <button class="sidebar-add-btn" onclick="openCarForm()">
+          <span style="font-size:16px;">＋</span> เพิ่มรถใหม่
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn btn-secondary btn-sm" style="width:100%;" onclick="logoutFirebase()">🚪 ออกจากระบบ</button>
+      </div>
+    </aside>
 
-  <!-- CAR DETAIL -->
-  <div class="screen" id="carDetailScreen">
-    <div id="carDetailContent"></div>
-    <button class="fab" onclick="openRecordForm()">+</button>
-  </div>
+    <!-- MAIN CONTENT -->
+    <div class="app-main">
 
-  <!-- CAR FORM MODAL -->
-  <div class="modal-overlay" id="carFormModal">
-    <div class="modal">
-      <div class="modal-handle"></div>
-      <h2 id="carFormTitle">เพิ่มรถใหม่</h2>
-      <div class="form-section">
-        <h3>ข้อมูลรถ</h3>
-        <div class="form-group">
-          <label for="carBrand">ยี่ห้อ *</label>
-          <input type="text" id="carBrand" placeholder="เช่น Toyota, Honda">
-        </div>
-        <div class="form-group">
-          <label for="carModel">รุ่น *</label>
-          <input type="text" id="carModel" placeholder="เช่น Vios, Civic">
-        </div>
-        <div class="form-group">
-          <label for="carYear">ปี</label>
-          <input type="number" id="carYear" placeholder="2024">
-        </div>
-        <div class="form-group">
-          <label for="carPlate">ทะเบียน</label>
-          <input type="text" id="carPlate" placeholder="กข 1234">
-        </div>
-        <div class="form-group">
-          <label for="carTankSize">ความจุถัง (L)</label>
-          <input type="number" step="0.1" id="carTankSize" placeholder="50">
+      <!-- MOBILE HEADER -->
+      <div class="app-header">
+        <button class="back-btn" id="backBtn" onclick="goBack()" style="display:none;">←</button>
+        <div class="app-logo">POON<span>*</span>FUEL</div>
+        <div class="header-title" id="headerTitle"></div>
+        <div class="header-actions">
+          <button class="btn btn-sm btn-secondary" onclick="logoutFirebase()">ออก</button>
         </div>
       </div>
-      <div style="display:flex;gap:8px;">
+
+      <!-- CAR LIST -->
+      <div class="screen active" id="carListScreen">
+        <div class="desktop-topbar">
+          <div class="desktop-topbar-title">รถของฉัน</div>
+          <button class="desktop-fab" onclick="openCarForm()">＋ เพิ่มรถใหม่</button>
+        </div>
+        <div id="carListContent"></div>
+        <button class="fab" onclick="openCarForm()">+</button>
+      </div>
+
+      <!-- CAR DETAIL -->
+      <div class="screen" id="carDetailScreen">
+        <div class="desktop-topbar">
+          <div class="desktop-topbar-title" id="desktopCarTitle"></div>
+          <button class="desktop-fab" onclick="openRecordForm()">⛽ เติมน้ำมัน</button>
+        </div>
+        <div id="carDetailContent"></div>
+        <button class="fab" onclick="openRecordForm()">+</button>
+      </div>
+
+    </div><!-- /app-main -->
+  </div><!-- /app-layout -->
+
+  <!-- CAR FORM MODAL -->
+  <div class="modal-overlay" id="carFormModal" onclick="handleOverlayClick(event,'carFormModal')">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <h2 id="carFormTitle">เพิ่มรถใหม่</h2>
+        <button class="modal-close" onclick="closeCarForm()">✕</button>
+      </div>
+      <div class="form-section">
+        <h3>ข้อมูลรถ</h3>
+        <div class="form-2col">
+          <div class="form-group">
+            <label for="carBrand">ยี่ห้อ *</label>
+            <input type="text" id="carBrand" placeholder="เช่น Toyota, Honda">
+          </div>
+          <div class="form-group">
+            <label for="carModel">รุ่น *</label>
+            <input type="text" id="carModel" placeholder="เช่น Vios, Civic">
+          </div>
+          <div class="form-group">
+            <label for="carYear">ปี</label>
+            <input type="number" id="carYear" placeholder="2024">
+          </div>
+          <div class="form-group">
+            <label for="carPlate">ทะเบียน</label>
+            <input type="text" id="carPlate" placeholder="กข 1234">
+          </div>
+          <div class="form-group span2">
+            <label for="carTankSize">ความจุถัง (L)</label>
+            <input type="number" step="0.1" id="carTankSize" placeholder="50">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeCarForm()">ยกเลิก</button>
         <button class="btn btn-primary" onclick="saveCarForm()">บันทึก</button>
       </div>
@@ -359,10 +679,14 @@
   </div>
 
   <!-- RECORD FORM MODAL -->
-  <div class="modal-overlay" id="recordFormModal">
+  <div class="modal-overlay" id="recordFormModal" onclick="handleOverlayClick(event,'recordFormModal')">
     <div class="modal">
       <div class="modal-handle"></div>
-      <h2 id="recordFormTitle">บันทึกการเติมน้ำมัน</h2>
+      <div class="modal-header">
+        <h2 id="recordFormTitle">บันทึกการเติมน้ำมัน</h2>
+        <button class="modal-close" onclick="closeRecordForm()">✕</button>
+      </div>
+
 
       <div class="form-section">
         <h3>ข้อมูลการเติม</h3>
@@ -450,13 +774,14 @@
         </div>
       </div>
 
-      <div style="display:flex;gap:8px;">
+      <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeRecordForm()">ยกเลิก</button>
         <button class="btn btn-primary" onclick="saveRecordForm()">บันทึก</button>
       </div>
     </div>
   </div>
-</div>
+
+</div><!-- /app -->
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
@@ -497,6 +822,33 @@ function generateId() {
   return Date.now() + '-' + Math.random().toString(36).substr(2, 9);
 }
 
+// ======== SIDEBAR (desktop) ========
+function renderSidebar() {
+  const list = document.getElementById('sidebarCarList');
+  if (!list) return;
+  if (!state.cars || !state.cars.length) {
+    list.innerHTML = `<div style="padding:8px;font-size:13px;color:var(--text-muted);">ยังไม่มีรถ</div>`;
+    return;
+  }
+  list.innerHTML = state.cars.map(car => {
+    const recCount = car.records ? car.records.length : 0;
+    const isActive = car.id === state.currentCarId;
+    return `
+      <div class="sidebar-car-item ${isActive ? 'active' : ''}" onclick="openCarDetail('${car.id}')">
+        <div class="sidebar-car-icon">🚗</div>
+        <div class="sidebar-car-info">
+          <div class="sidebar-car-name">${car.brand} ${car.model}</div>
+          <div class="sidebar-car-sub">${car.plate || 'ไม่ระบุ'} · ${recCount} รายการ</div>
+        </div>
+        <div class="sidebar-car-actions">
+          <button class="icon-btn edit" onclick="event.stopPropagation();editCar('${car.id}')" title="แก้ไข">✏️</button>
+          <button class="icon-btn" onclick="event.stopPropagation();deleteCar('${car.id}')" title="ลบ">🗑️</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
 // ======== SAVE/LOAD ========
 async function saveState() {
   if (window.firebaseAuth && window.firebaseAuth.currentUser && window.userDocRef) {
@@ -524,16 +876,21 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
   const backBtn = document.getElementById('backBtn');
   const headerTitle = document.getElementById('headerTitle');
+  const desktopTitle = document.getElementById('desktopCarTitle');
   if (id === 'carListScreen') {
     backBtn.style.display = 'none';
     headerTitle.textContent = '';
+    if (desktopTitle) desktopTitle.textContent = 'รถของฉัน';
   } else {
     backBtn.style.display = 'flex';
     if (id === 'carDetailScreen') {
       const car = currentCar();
-      headerTitle.textContent = car ? `${car.brand} ${car.model}` : '';
+      const title = car ? `${car.brand} ${car.model}` : '';
+      headerTitle.textContent = title;
+      if (desktopTitle) desktopTitle.textContent = title;
     }
   }
+  renderSidebar();
 }
 
 function goBack() {
@@ -549,6 +906,7 @@ function openCarDetail(carId) {
 
 // ======== CAR LIST ========
 function renderCars() {
+  renderSidebar();
   const content = document.getElementById('carListContent');
   if (!state.cars || !state.cars.length) {
     content.innerHTML = `
@@ -562,16 +920,17 @@ function renderCars() {
   }
   const html = `<div class="car-grid">${state.cars.map(car => {
     const recCount = car.records ? car.records.length : 0;
+    const totalCost = car.records ? car.records.reduce((s,r) => s + (r.totalCost||0), 0) : 0;
     return `
       <div class="car-card" onclick="openCarDetail('${car.id}')">
         <div class="car-icon">🚗</div>
         <div class="car-info">
           <div class="car-name">${car.brand} ${car.model}</div>
-          <div class="car-sub">${car.plate || 'ไม่ระบุทะเบียน'} • ${recCount} รายการ</div>
+          <div class="car-sub">${car.plate || 'ไม่ระบุทะเบียน'} · ${recCount} รายการ${totalCost > 0 ? ' · ฿' + totalCost.toLocaleString('th', {maximumFractionDigits:0}) : ''}</div>
         </div>
         <div class="car-actions">
-          <button class="icon-btn edit" onclick="event.stopPropagation(); editCar('${car.id}')">✏️</button>
-          <button class="icon-btn" onclick="event.stopPropagation(); deleteCar('${car.id}')">🗑️</button>
+          <button class="icon-btn edit" onclick="event.stopPropagation(); editCar('${car.id}')" title="แก้ไข">✏️</button>
+          <button class="icon-btn" onclick="event.stopPropagation(); deleteCar('${car.id}')" title="ลบ">🗑️</button>
         </div>
       </div>
     `;
@@ -699,60 +1058,101 @@ function renderRecordsTab() {
       <div class="empty-state">
         <div class="empty-icon">⛽</div>
         <div class="empty-title">ยังไม่มีบันทึกการเติมน้ำมัน</div>
-        <div class="empty-sub">กดปุ่ม + เพื่อเพิ่มบันทึก</div>
+        <div class="empty-sub">กดปุ่ม "เติมน้ำมัน" เพื่อเพิ่มบันทึก</div>
       </div>
     `;
     return;
   }
 
   const sorted = [...car.records].sort((a, b) => new Date(b.date) - new Date(a.date));
-  const html = `
-    <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
-      <button class="btn btn-sm btn-gold" onclick="exportPDF()">📄 Export PDF</button>
-    </div>
-    <div class="rec-list">
-      ${sorted.map(r => `
-        <div class="rec-card">
-          <div class="rec-header">
-            <div class="rec-date">${formatDate(r.date)}</div>
-            <div class="rec-fuel-badge">${r.fuelType || '-'}</div>
+  const isDesktop = window.innerWidth >= 768;
+
+  const exportBtn = `<div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+    <button class="btn btn-sm btn-gold" onclick="exportPDF()">📄 Export PDF</button>
+  </div>`;
+
+  if (isDesktop) {
+    const tableRows = sorted.map(r => `
+      <tr>
+        <td class="mono">${formatDate(r.date)}</td>
+        <td>${r.station || '-'}</td>
+        <td><span class="rec-fuel-badge">${r.fuelType || '-'}</span></td>
+        <td class="mono" style="text-align:right;">${r.totalCost ? r.totalCost.toLocaleString('th',{minimumFractionDigits:2,maximumFractionDigits:2}) : '-'}</td>
+        <td class="mono" style="text-align:right;">${r.liters ? r.liters.toFixed(2) : '-'}</td>
+        <td class="mono" style="text-align:right;">${r.pricePerL ? r.pricePerL.toFixed(2) : '-'}</td>
+        <td class="mono" style="text-align:right;">${r.kmDriven || '-'}</td>
+        <td class="mono highlight" style="text-align:right;">${r.avgCar ? r.avgCar.toFixed(2) : '-'}</td>
+        <td>
+          <div style="display:flex;gap:5px;">
+            <button class="icon-btn edit" onclick="editRecord('${r.id}')" title="แก้ไข">✏️</button>
+            <button class="icon-btn" onclick="deleteRecord('${r.id}')" title="ลบ">🗑️</button>
           </div>
-          <div class="rec-row">
-            <span class="rec-label">ปั๊ม</span>
-            <span class="rec-val">${r.station || '-'}</span>
-          </div>
-          <div class="rec-row">
-            <span class="rec-label">ราคารวม</span>
-            <span class="rec-val">${r.totalCost ? r.totalCost.toFixed(2) : '-'} ฿</span>
-          </div>
-          <div class="rec-row">
-            <span class="rec-label">ลิตร</span>
-            <span class="rec-val">${r.liters ? r.liters.toFixed(2) : '-'} L</span>
-          </div>
-          <div class="rec-row">
-            <span class="rec-label">ราคา/ลิตร</span>
-            <span class="rec-val">${r.pricePerL ? r.pricePerL.toFixed(2) : '-'} ฿/L</span>
-          </div>
-          ${r.kmDriven ? `
-            <div class="rec-row">
-              <span class="rec-label">ระยะทาง</span>
-              <span class="rec-val">${r.kmDriven} km</span>
-            </div>
-            <div class="rec-row">
-              <span class="rec-label">อัตราสิ้นเปลือง</span>
-              <span class="rec-val rec-highlight">${r.avgCar ? r.avgCar.toFixed(2) : '-'} km/L</span>
-            </div>
-          ` : ''}
-          ${r.note ? `<div class="rec-row"><span class="rec-label">หมายเหตุ</span><span class="rec-val">${r.note}</span></div>` : ''}
-          <div style="display:flex;gap:6px;margin-top:10px;">
-            <button class="btn btn-sm btn-secondary" onclick="editRecord('${r.id}')">แก้ไข</button>
-            <button class="btn btn-sm btn-danger" onclick="deleteRecord('${r.id}')">ลบ</button>
-          </div>
+        </td>
+      </tr>
+    `).join('');
+
+    content.innerHTML = exportBtn + `
+      <div class="rec-table-wrap">
+        <table class="rec-table">
+          <thead>
+            <tr>
+              <th>วันที่</th>
+              <th>ปั๊ม</th>
+              <th>น้ำมัน</th>
+              <th style="text-align:right;">ราคารวม (฿)</th>
+              <th style="text-align:right;">ลิตร</th>
+              <th style="text-align:right;">฿/L</th>
+              <th style="text-align:right;">กม.</th>
+              <th style="text-align:right;">km/L</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      </div>
+    `;
+  } else {
+    const cards = sorted.map(r => `
+      <div class="rec-card">
+        <div class="rec-header">
+          <div class="rec-date">${formatDate(r.date)}</div>
+          <div class="rec-fuel-badge">${r.fuelType || '-'}</div>
         </div>
-      `).join('')}
-    </div>
-  `;
-  content.innerHTML = html;
+        <div class="rec-row">
+          <span class="rec-label">ปั๊ม</span>
+          <span class="rec-val">${r.station || '-'}</span>
+        </div>
+        <div class="rec-row">
+          <span class="rec-label">ราคารวม</span>
+          <span class="rec-val">${r.totalCost ? r.totalCost.toFixed(2) : '-'} ฿</span>
+        </div>
+        <div class="rec-row">
+          <span class="rec-label">ลิตร</span>
+          <span class="rec-val">${r.liters ? r.liters.toFixed(2) : '-'} L</span>
+        </div>
+        <div class="rec-row">
+          <span class="rec-label">ราคา/ลิตร</span>
+          <span class="rec-val">${r.pricePerL ? r.pricePerL.toFixed(2) : '-'} ฿/L</span>
+        </div>
+        ${r.kmDriven ? `
+          <div class="rec-row">
+            <span class="rec-label">ระยะทาง</span>
+            <span class="rec-val">${r.kmDriven} km</span>
+          </div>
+          <div class="rec-row">
+            <span class="rec-label">อัตราสิ้นเปลือง</span>
+            <span class="rec-val rec-highlight">${r.avgCar ? r.avgCar.toFixed(2) : '-'} km/L</span>
+          </div>
+        ` : ''}
+        ${r.note ? `<div class="rec-row"><span class="rec-label">หมายเหตุ</span><span class="rec-val">${r.note}</span></div>` : ''}
+        <div class="rec-actions">
+          <button class="btn btn-sm btn-secondary" onclick="editRecord('${r.id}')">แก้ไข</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteRecord('${r.id}')">ลบ</button>
+        </div>
+      </div>
+    `).join('');
+    content.innerHTML = exportBtn + `<div class="rec-list">${cards}</div>`;
+  }
 }
 
 function renderStatsTab() {
@@ -1085,6 +1485,23 @@ function exportPDF() {
 
   doc.save(`POONFUEL_${car.brand}_${car.model}.pdf`);
 }
+
+// ======== MODAL OVERLAY CLICK ========
+function handleOverlayClick(e, modalId) {
+  if (e.target.classList.contains('modal-overlay')) {
+    if (modalId === 'carFormModal') closeCarForm();
+    else if (modalId === 'recordFormModal') closeRecordForm();
+  }
+}
+
+// Re-render records tab on resize (switch between table and cards)
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    if (state.currentCarId) renderRecordsTab();
+  }, 200);
+});
 
 // ======== INIT ========
 loadState();
