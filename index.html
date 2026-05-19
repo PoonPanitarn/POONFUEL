@@ -327,6 +327,10 @@
     }
     .desktop-fab:hover { background: #6BAF60; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(123,201,111,0.3); }
 
+    /* Show desktop-only elements */
+    .desktop-topbar { display: flex; }
+    .desktop-fab { display: inline-flex; }
+
     /* Desktop modal: centered, not bottom sheet */
     .modal-overlay {
       align-items: center;
@@ -598,7 +602,8 @@
         </button>
       </nav>
       <div class="sidebar-footer">
-        <button class="btn btn-secondary btn-sm" style="width:100%;" onclick="logoutFirebase()">🚪 ออกจากระบบ</button>
+        <div id="sidebarUserInfo" style="font-size:11px;color:var(--text-muted);margin-bottom:10px;padding:0 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
+        <button class="btn btn-danger btn-sm" style="width:100%;" onclick="logoutFirebase()">🚪 ออกจากระบบ</button>
       </div>
     </aside>
 
@@ -611,7 +616,7 @@
         <div class="app-logo" id="headerLogo">POON<span>*</span>FUEL</div>
         <div class="header-title" id="headerTitle"></div>
         <div class="header-actions">
-          <button class="btn btn-sm btn-secondary" onclick="logoutFirebase()">🚪 ออก</button>
+          <button class="btn btn-sm btn-danger" onclick="logoutFirebase()" style="gap:4px;">🚪 ออก</button>
         </div>
       </div>
 
@@ -1603,6 +1608,10 @@ onAuthStateChanged(auth, async (user) => {
   if (user) {
     authBox.style.display = 'none';
     appBox.style.display = 'block';
+
+    // Show user email in sidebar
+    const sidebarUser = document.getElementById('sidebarUserInfo');
+    if (sidebarUser) sidebarUser.textContent = '👤 ' + user.email;
 
     window.userDocRef = doc(db, "users", user.uid);
 
