@@ -249,8 +249,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 20px 28px 0;
+      padding: 16px 28px;
       margin-bottom: 4px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
     .desktop-topbar-title {
       font-size: 22px;
@@ -326,6 +331,24 @@
       transition: all 0.15s;
     }
     .desktop-fab:hover { background: #6BAF60; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(123,201,111,0.3); }
+
+    /* Desktop logout button */
+    .desktop-logout-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      background: var(--danger-light);
+      color: #e87a6f;
+      border: 1px solid rgba(192,57,43,0.3);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .desktop-logout-btn:hover { background: var(--danger); color: #fff; }
 
     /* Show desktop-only elements */
     .desktop-topbar { display: flex; }
@@ -627,14 +650,21 @@
       <!-- DESKTOP TOPBAR (outside screens, always visible on desktop) -->
       <div class="desktop-topbar" id="desktopTopbarList">
         <div class="desktop-topbar-title">รถของฉัน</div>
-        <button class="desktop-fab" onclick="openCarForm()">＋ เพิ่มรถใหม่</button>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span id="mobileUserInfo" style="font-size:12px;color:var(--text-muted);"></span>
+          <button class="desktop-fab" onclick="openCarForm()">＋ เพิ่มรถใหม่</button>
+          <button class="desktop-logout-btn" onclick="logoutFirebase()">🚪 ออกจากระบบ</button>
+        </div>
       </div>
       <div class="desktop-topbar dt-hidden" id="desktopTopbarDetail">
         <div style="display:flex;align-items:center;gap:12px;">
-          <button onclick="goBack()" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--text);cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;">← กลับ</button>
+          <button onclick="goBack()" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 14px;color:var(--text);cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:6px;">← กลับ</button>
           <div class="desktop-topbar-title" id="desktopCarTitle"></div>
         </div>
-        <button class="desktop-fab" onclick="openRecordForm()">⛽ เติมน้ำมัน</button>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button class="desktop-fab" onclick="openRecordForm()">⛽ เติมน้ำมัน</button>
+          <button class="desktop-logout-btn" onclick="logoutFirebase()">🚪 ออกจากระบบ</button>
+        </div>
       </div>
 
       <!-- CAR LIST -->
@@ -874,6 +904,8 @@ async function saveState() {
 }
 
 function loadState() {
+  // Only load from localStorage when NOT using Firebase (no logged-in user)
+  if (window.firebaseAuth && window.firebaseAuth.currentUser) return;
   const stored = localStorage.getItem('poonfuel');
   if (stored) {
     try {
@@ -1620,16 +1652,22 @@ onAuthStateChanged(auth, async (user) => {
   const appBox = document.getElementById('app');
 
   if (user) {
+    // Reset state to empty before loading user-specific data — prevents cross-user data leakage
+    state = window.state = { cars: [], currentCarId: null, editingCarId: null, editingRecordId: null };
+    renderCars();
+
     authBox.style.display = 'none';
     appBox.style.display = 'block';
 
-    // Show user email in sidebar
+    // Show user email in sidebar and mobile header
     const sidebarUser = document.getElementById('sidebarUserInfo');
     if (sidebarUser) sidebarUser.textContent = '👤 ' + user.email;
+    const mobileUserInfo = document.getElementById('mobileUserInfo');
+    if (mobileUserInfo) mobileUserInfo.textContent = user.email;
 
     window.userDocRef = doc(db, "users", user.uid);
 
-    // realtime sync across devices
+    // realtime sync across devices — this is the single source of truth
     onSnapshot(window.userDocRef, async (snap) => {
       if (snap.exists()) {
         const data = snap.data();
@@ -1638,11 +1676,10 @@ onAuthStateChanged(auth, async (user) => {
           renderCars();
         }
       } else {
+        // New user: save the empty state to Firestore
         await saveState();
       }
     });
-
-    await loadState();
 
   } else {
     appBox.style.display = 'none';
